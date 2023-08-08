@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed,ref } from 'vue';
 import enUS from '@arco-design/web-vue/es/locale/lang/en-us';
 import zhCN from '@arco-design/web-vue/es/locale/lang/zh-cn';
 import useLocale from './hooks/locale';
@@ -22,4 +22,6 @@ const locale = computed(() => {
       return zhCN;
   }
 });
+const percentage = ref(0);
+const showProgressBar = ref(false);
 </script>

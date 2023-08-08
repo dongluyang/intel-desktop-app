@@ -19,6 +19,23 @@ module.exports = {
       config: {},
     },
   ],
+
+
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'dongluyang',
+          name: 'intel-desktop-app'
+        },
+        authToken:'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',
+        prerelease: true
+      }
+    }
+  ],
+
+
   plugins: [
     {
       name: '@electron-forge/plugin-vite',

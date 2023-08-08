@@ -5,6 +5,13 @@ import App from './App.vue';
 import '@arco-design/web-vue/dist/arco.css';
 import router from './router';
 
+// import {ipcRenderer } from "electron";
+// ipcRenderer.on("downloadProgress", (arg, event) => {
+//   let component = router.currentRoute.matched[0].instances.default;
+//     component.percentage = event.percent;
+//     component.showProgressBar = true
+// });
+
 import { createI18n } from 'vue-i18n';
 
 const i18n = createI18n({
