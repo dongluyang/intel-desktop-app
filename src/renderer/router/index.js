@@ -4,7 +4,8 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 // 1. Define route components.
 // These can be imported from other files
 import Home from '../views/Home.vue'
-import TaskList from "../components/TaskList.vue";
+import TaskList from "../components/TaskList.vue"
+import PluginList from "../components/PluginList.vue"
 const About = { template: '<div>About</div>' }
 
 const routes = [
@@ -15,6 +16,10 @@ const routes = [
             {
                 path: '/pending_tasks',
                 component: TaskList, // 子路由组件
+            },
+            {
+                path: '/plugins',
+                component: PluginList, // 子路由组件
             }
         ]
     },

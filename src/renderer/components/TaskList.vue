@@ -1,5 +1,45 @@
 <template>
-  <a-table :columns="columns" :data="data" @row-dblclick="doubleClickRow" />
+
+
+  <a-layout>
+    <a-layout-sider>
+      <div class="menu-demo">
+        <a-menu
+            :style="{ width: '200px', height: '100%' }"
+            :default-open-keys="['0']"
+            :default-selected-keys="['0_2']"
+            show-collapse-button
+            breakpoint="xl"
+            default-collapsed="false"
+            @collapse="onCollapse"
+        >
+          <a-menu-item key="0">
+            <a-button type="text" @click="clickTasks">
+              <template #icon>
+                <icon-pen-fill />
+              </template>
+              <template #default>待我提交</template>
+            </a-button>
+          </a-menu-item>
+          <a-menu-item key="1">
+            <a-button type="text">
+              <template #icon>
+                <icon-tool />
+              </template>
+              <template #default>待我审验</template>
+            </a-button>
+          </a-menu-item>
+        </a-menu>
+      </div>
+    </a-layout-sider>
+    <a-layout-content>
+      <div style="padding: 10px;">
+      <a-table :columns="columns" :data="data" @row-dblclick="doubleClickRow" />
+    </div>
+    </a-layout-content>
+  </a-layout>
+
+
 </template>
 
 <script>

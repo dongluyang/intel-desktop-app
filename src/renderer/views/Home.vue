@@ -1,15 +1,27 @@
 <script setup>
   import { useRouter, useRoute } from 'vue-router';
-  import { ref } from "vue";
+  import { ref,onMounted } from "vue";
   import Login from '../components/Login.vue'
   const router = useRouter();
   const route = useRoute();
-  const handleClick2 = () => {
-        router.replace({path:'/about'});
-   }
   const clickTasks = () => {
     router.replace({path:'/pending_tasks'});
   }
+
+  const tabChange = (key) => {
+    if (key==1) {
+      router.replace({path:'/pending_tasks'});
+    } else if (key==2) {
+      router.replace({path:'/plugins'});
+    } else if (key==3) {
+
+    }
+  }
+
+  onMounted(() => {
+    router.replace({path:'/pending_tasks'});
+  })
+
   const showLogin = ref(false);
   const handleOk = () => {
     showLogin.value = true;
@@ -23,7 +35,7 @@
 
  <div>
    <!-- 在这里添加按钮并进行右对齐 -->
-  <a-tabs>
+  <a-tabs @tab-click="tabChange">
 
     <a-tab-pane key="1">
       <template #title>
@@ -37,13 +49,11 @@
       </template>
     </a-tab-pane>
 
-
     <a-tab-pane key="3">
       <template #title>
         <icon-calendar/> 应用脚本
       </template>
     </a-tab-pane>
-
 
     <a-tab-pane key="4">
       <template #title>
@@ -51,42 +61,9 @@
       </template>
        <p>{{ $t('welcome') }}</p>
     </a-tab-pane>
-  </a-tabs>
+   </a-tabs>
 
-   <a-layout>
-     <a-layout-sider> <div class="menu-demo">
-       <a-menu
-           :style="{ width: '200px', height: '100%' }"
-           :default-open-keys="['0']"
-           :default-selected-keys="['0_2']"
-           show-collapse-button
-           breakpoint="xl"
-           default-collapsed="false"
-           @collapse="onCollapse"
-       >
-         <a-menu-item key="0">
-           <a-button type="text" @click="clickTasks">
-             <template #icon>
-               <icon-pen-fill />
-             </template>
-             <template #default>待我提交</template>
-           </a-button>
-         </a-menu-item>
-         <a-menu-item key="1">
-           <a-button type="text">
-             <template #icon>
-               <icon-tool />
-             </template>
-             <template #default>待我审验</template>
-           </a-button>
-         </a-menu-item>
-       </a-menu>
-     </div></a-layout-sider>
-     <a-layout-content><div style="padding: 10px;"><router-view /></div></a-layout-content>
-   </a-layout>
-
-
-
+   <div style="padding: 10px;"><router-view /></div>
 
    <a-button type="primary" class="floating-button larger-button" size="medium" @click="handleOk">登录</a-button>
    <a-modal v-model:visible="showLogin" @ok="handleOk" @cancel="handleCancel">
