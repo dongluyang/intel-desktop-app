@@ -4,12 +4,20 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 // 1. Define route components.
 // These can be imported from other files
 import Home from '../views/Home.vue'
+import TaskList from "../components/TaskList.vue";
 const About = { template: '<div>About</div>' }
 
 const routes = [
-    { path: '/home', component: Home },
+    { path: '/home', component: Home},
     { path: '/about', component: About },
-    { path: '/', component: Home },
+    { path: '/', component: Home,
+        children: [
+            {
+                path: '/pending_tasks',
+                component: TaskList, // 子路由组件
+            }
+        ]
+    },
     { path:'/:catchAll(.*)',redirect:'/404'}
   ]
 
@@ -21,5 +29,5 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes, // short for `routes: routes`
   })
-  
-  export default router;  
+
+  export default router;
