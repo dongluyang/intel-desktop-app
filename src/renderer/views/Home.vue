@@ -14,7 +14,9 @@
     } else if (key==2) {
       router.replace({path:'/plugins'});
     } else if (key==3) {
-
+      router.replace({path:'/scripts'});
+    } else if (key==4) {
+      router.replace({path:'/setting'});
     }
   }
 
@@ -59,7 +61,7 @@
       <template #title>
         <icon-clock-circle/> 偏好设置
       </template>
-       <p>{{ $t('welcome') }}</p>
+<!--       <p>{{ $t('welcome') }}</p>-->
     </a-tab-pane>
    </a-tabs>
 
