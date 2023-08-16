@@ -1,4 +1,17 @@
+<script setup>
+import { ref,reactive } from "vue";
+const keyword = ref('')
+const searchByClick = () => {
+   window.versions.ping(keyword.value)
+}
+
+</script>
 <template>
+  <div>
+  <a-row>
+   <a-input v-model="keyword" style="width:320px;margin-right:10px;margin-bottom:10px" placeholder="请输入关键词" allow-clear />
+   <a-button type="primary" @click="searchByClick">搜索</a-button>
+   </a-row>
   <a-list>
     <a-list-item v-for="idx in 4" :key="idx">
       <a-list-item-meta
@@ -20,4 +33,5 @@
       </template>
     </a-list-item>
   </a-list>
+  </div>
 </template>

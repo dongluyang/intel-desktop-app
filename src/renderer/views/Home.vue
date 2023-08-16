@@ -61,7 +61,7 @@
       <template #title>
         <icon-clock-circle/> 偏好设置
       </template>
-<!--       <p>{{ $t('welcome') }}</p>-->
+     <p>{{ $t('welcome') }}</p>
     </a-tab-pane>
    </a-tabs>
 

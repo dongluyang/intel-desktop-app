@@ -1,6 +1,10 @@
-const { app, BrowserWindow} = require('electron');
+const { app, BrowserWindow,ipcMain} = require('electron');
 const path = require('path');
 import autoUpdater from './update'
+
+const Store = require('electron-store');
+const store = new Store();
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -40,10 +44,25 @@ const createWindow = () => {
 
 };
 
+
+async function handlePing (event, keyword) {
+  const webContents = event.sender
+  const win = BrowserWindow.fromWebContents(webContents)
+  win.setTitle(keyword)
+}
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', ()=>{
+  ipcMain.on('ping', handlePing)
+  ipcMain.handle('getStoreValue', (event, key) => {
+    return store.get(key);
+  });
+  ipcMain.handle('saveStoreValue', (event, key,value) => {
+    store.set(key,value);
+  });
   createWindow()
 });
 

@@ -24,7 +24,7 @@
       <a-input v-model="storageForm.projectStorage" placeholder="请输入项目本地存储地址" />
     </a-form-item>
     <a-form-item>
-      <a-button html-type="submit">提交</a-button>
+      <a-button @click="saveLocalConfig">提交</a-button>
     </a-form-item>
   </a-form>
   <a-divider />
@@ -44,8 +44,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
-
+import { reactive,onMounted  } from 'vue';
 export default {
   setup() {
     const form = reactive({
@@ -65,11 +64,27 @@ export default {
       console.log(data)
     }
 
+    const saveLocalConfig = ()=>{
+           window.intel_configs.save("local_setting",JSON.stringify(storageForm))
+    }
+
+    onMounted(async () => {
+      const defaultConfig = await window.intel_configs.get("local_setting")
+      if (defaultConfig!=null) {
+        const existedStorageConfig = JSON.parse(defaultConfig)
+        storageForm.assetStorage = existedStorageConfig.assetStorage
+        storageForm.projectStorage = existedStorageConfig.projectStorage
+      }
+     
+      console.log(storageForm)
+    });
+
     return {
       form,
       handleSubmit,
       storageForm,
-      teamForm
+      teamForm,
+      saveLocalConfig
     }
   },
 }

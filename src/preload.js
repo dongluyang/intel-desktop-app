@@ -7,6 +7,12 @@ contextBridge.exposeInMainWorld('versions', {
   node: () => process.versions.node,
   chrome: () => process.versions.chrome,
   electron: () => process.versions.electron,
-  ping: () => ipcRenderer.invoke('ping')
+  ping: (value) => ipcRenderer.send('ping',value),
+  // We can expose not only functions, but also variables
+})
+
+contextBridge.exposeInMainWorld('intel_configs', {
+  save: (key,value) => ipcRenderer.invoke('saveStoreValue',key,value),
+  get: (key) => ipcRenderer.invoke('getStoreValue',key),
   // We can expose not only functions, but also variables
 })
