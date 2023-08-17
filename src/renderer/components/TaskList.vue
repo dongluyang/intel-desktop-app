@@ -49,6 +49,7 @@ export default {
   setup() {
     const doubleClickRow = (row)=> {
       window.alert(row.name)
+      window.plugins.open("maya2018")
     }
     const columns = [
       {

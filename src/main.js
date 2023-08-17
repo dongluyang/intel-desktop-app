@@ -1,7 +1,7 @@
 const { app, BrowserWindow,ipcMain} = require('electron');
 const path = require('path');
 import autoUpdater from './update'
-
+const { exec } = require('child_process');
 const Store = require('electron-store');
 const store = new Store();
 
@@ -52,6 +52,16 @@ async function handlePing (event, keyword) {
 }
 
 
+async function handleOpenPlugins (event, pluginName) {
+  const mayaExecutablePath = 'C:\\Program Files\\Autodesk\\Maya2018\\bin\\maya.exe'; // Update this path
+  exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error opening Maya: ${error}`);
+    }
+  });
+}
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -63,6 +73,10 @@ app.on('ready', ()=>{
   ipcMain.handle('saveStoreValue', (event, key,value) => {
     store.set(key,value);
   });
+
+  ipcMain.handle('openPlugin',handleOpenPlugins);
+
+
   createWindow()
 });
 

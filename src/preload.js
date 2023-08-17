@@ -14,5 +14,9 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('intel_configs', {
   save: (key,value) => ipcRenderer.invoke('saveStoreValue',key,value),
   get: (key) => ipcRenderer.invoke('getStoreValue',key),
-  // We can expose not only functions, but also variables
+})
+
+
+contextBridge.exposeInMainWorld('plugins', {
+  open: (name) => ipcRenderer.invoke('openPlugin',name),
 })
