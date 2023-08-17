@@ -2,6 +2,7 @@
   import { useRouter, useRoute } from 'vue-router';
   import { ref,onMounted } from "vue";
   import Login from '../components/Login.vue'
+  import request from '../utils/request'
   const router = useRouter();
   const route = useRoute();
   const clickTasks = () => {
@@ -25,8 +26,40 @@
   })
 
   const showLogin = ref(false);
-  const handleOk = () => {
+  const userName = ref('');
+  const password = ref('');
+
+
+// 事件处理函数
+const updateUserName = (input) => {
+	userName.value = input;
+}
+
+// 事件处理函数
+const updatePassword = (input) => {
+  console.log("ddddddddd")
+	password.value = input;
+}
+
+
+   const login = ()=>{
+
+      const payload='userName='+userName.value+'&password='+password.value
+      const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+      console.log(payload)
+      return request.post('http://api.cgyun.cn/system/user/login',payload,{headers:headers}  )
+   }
+
+  const openDialog = () => {
     showLogin.value = true;
+  };
+
+  const handleOk = () => {
+    console.log(userName.value)
+     console.log(userName.value)
+    login().then(rest=>{
+      console.log("ddd")
+    })
   };
   const handleCancel = () => {
     showLogin.value = false;
@@ -67,12 +100,12 @@
 
    <div style="padding: 10px;"><router-view /></div>
 
-   <a-button type="primary" class="floating-button larger-button" size="medium" @click="handleOk">登录</a-button>
+   <a-button type="primary" class="floating-button larger-button" size="medium" @click="openDialog">登录</a-button>
    <a-modal v-model:visible="showLogin" @ok="handleOk" @cancel="handleCancel">
      <template #title>
        登录系统
      </template>
-     <Login></Login>
+     <Login @updateUserName="updateUserName"  @updatePassword="updatePassword"></Login>
    </a-modal>
  </div>
 </template>
