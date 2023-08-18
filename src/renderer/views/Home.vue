@@ -26,9 +26,11 @@
   })
 
   const showLogin = ref(false);
+  const showTeamSelect = ref(false);
   const userName = ref('');
   const password = ref('');
-
+  const teamList = ref([]);
+  const groupId = ref(null);
 
 // 事件处理函数
 const updateUserName = (input) => {
@@ -54,12 +56,19 @@ const updatePassword = (input) => {
     showLogin.value = true;
   };
 
-  const handleOk = () => {
-    console.log(userName.value)
-     console.log(userName.value)
-    login().then(rest=>{
-      console.log("ddd")
-    })
+  const handleOk = (done) => {
+    if (userName.value!='' && password.value!='') {
+    login().then(resp=>{
+           teamList.value = resp.data.teams
+           console.log(teamList.value)
+           showTeamSelect.value = true
+           done(true)
+      }).catch(error=>{
+        done(false)
+      })
+    } else {
+      done(false)
+    }
   };
   const handleCancel = () => {
     showLogin.value = false;
@@ -101,12 +110,26 @@ const updatePassword = (input) => {
    <div style="padding: 10px;"><router-view /></div>
 
    <a-button type="primary" class="floating-button larger-button" size="medium" @click="openDialog">登录</a-button>
-   <a-modal v-model:visible="showLogin" @ok="handleOk" @cancel="handleCancel">
+   <a-modal v-model:visible="showLogin" :on-before-ok="handleOk" @cancel="handleCancel">
      <template #title>
        登录系统
      </template>
      <Login @updateUserName="updateUserName"  @updatePassword="updatePassword"></Login>
    </a-modal>
+
+
+
+   <a-modal v-model:visible="showTeamSelect" :on-before-ok="handleOk" @cancel="handleCancel">
+     <template #title>
+       选择团队
+     </template>
+     <a-select  v-model="groupId" :style="{width:'320px'}" placeholder="请选择团队">
+         <a-option v-for="item of teamList" :value="item.id" :label="item.groupName" />
+     </a-select>
+   </a-modal>
+
+
+
  </div>
 </template>
 
