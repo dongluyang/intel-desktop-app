@@ -7,7 +7,7 @@
       <a-input-password v-model="form.password" placeholder="请输入密码" @input="updatePassword" />
     </a-form-item>
   </a-form>
-  {{ form }}
+
 </template>
 
 <script>

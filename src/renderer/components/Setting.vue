@@ -65,11 +65,11 @@ export default {
     }
 
     const saveLocalConfig = ()=>{
-           window.intel_configs.save("local_setting",JSON.stringify(storageForm))
+           window.intel_configs.save("local_storage_setting",JSON.stringify(storageForm))
     }
 
     onMounted(async () => {
-      const defaultConfig = await window.intel_configs.get("local_setting")
+      const defaultConfig = await window.intel_configs.get("local_storage_setting")
       if (defaultConfig!=null) {
         const existedStorageConfig = JSON.parse(defaultConfig)
         storageForm.assetStorage = existedStorageConfig.assetStorage

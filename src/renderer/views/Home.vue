@@ -1,6 +1,6 @@
 <script setup>
   import { useRouter, useRoute } from 'vue-router';
-  import { ref,onMounted } from "vue";
+  import { ref,onMounted,reactive } from "vue";
   import Login from '../components/Login.vue'
   import request from '../utils/request'
   const router = useRouter();
@@ -30,7 +30,10 @@
   const userName = ref('');
   const password = ref('');
   const teamList = ref([]);
-  const groupId = ref(null);
+
+  const form = reactive({
+        groupId:""
+    })
 
 // 事件处理函数
 const updateUserName = (input) => {
@@ -39,7 +42,6 @@ const updateUserName = (input) => {
 
 // 事件处理函数
 const updatePassword = (input) => {
-  console.log("ddddddddd")
 	password.value = input;
 }
 
@@ -60,7 +62,9 @@ const updatePassword = (input) => {
     if (userName.value!='' && password.value!='') {
     login().then(resp=>{
            teamList.value = resp.data.teams
-           console.log(teamList.value)
+           console.log(resp.data.accessToken)
+           const accessToken = resp.data.accessToken
+           window.intel_configs.save("access_token",accessToken)
            showTeamSelect.value = true
            done(true)
       }).catch(error=>{
@@ -73,6 +77,23 @@ const updatePassword = (input) => {
   const handleCancel = () => {
     showLogin.value = false;
   }
+
+
+  const handleTeamSelectOk = (done) => {
+    if (form.groupId!='') {
+      const team = teamList.value.find(obj => obj.id === form.groupId);
+      window.intel_configs.save("current_team_setting",JSON.stringify(team))
+      done(true)
+    } else {
+      done(false)
+    }
+  };
+
+
+  const handleTeamSelectCancel = () => {
+    showTeamSelect.value = false;
+  }
+
 </script>
 
 <template>
@@ -119,13 +140,17 @@ const updatePassword = (input) => {
 
 
 
-   <a-modal v-model:visible="showTeamSelect" :on-before-ok="handleOk" @cancel="handleCancel">
+   <a-modal v-model:visible="showTeamSelect" :on-before-ok="handleTeamSelectOk" @cancel="handleTeamSelectCancel">
      <template #title>
        选择团队
      </template>
-     <a-select  v-model="groupId" :style="{width:'320px'}" placeholder="请选择团队">
-         <a-option v-for="item of teamList" :value="item.id" :label="item.groupName" />
-     </a-select>
+     <a-form :model="form" :style="{width:'600px'}">
+      <a-form-item field="groupId" label="团队" validate-trigger="input" required>
+        <a-select  v-model="form.groupId" :style="{width:'320px'}" placeholder="请选择团队">
+            <a-option v-for="item of teamList" :value="item.id" :label="item.groupName" />
+        </a-select>
+      </a-form-item>  
+     </a-form>
    </a-modal>
 
 
