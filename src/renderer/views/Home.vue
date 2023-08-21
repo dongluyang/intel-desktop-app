@@ -64,7 +64,7 @@ const updatePassword = (input) => {
            teamList.value = resp.data.teams
            console.log(resp.data.accessToken)
            const accessToken = resp.data.accessToken
-           window.intel_configs.save("access_token",accessToken)
+           window.intel_configs.save("user_info",JSON.stringify({"accessToken":accessToken,"userName":userName.value}))
            showTeamSelect.value = true
            done(true)
       }).catch(error=>{

@@ -34,8 +34,19 @@
     </a-layout-sider>
     <a-layout-content>
       <div style="padding: 10px;">
-      <a-table :columns="columns" :data="data" @row-dblclick="doubleClickRow" />
-    </div>
+         <a-space direction="horizontal" size="large" style="margin:10px" >
+            <a-select :style="{width:'320px'}" placeholder="请选择项目">
+              <a-option>Beijing</a-option>
+              <a-option>Shanghai</a-option>
+              <a-option>Guangzhou</a-option>
+              <a-option disabled>Disabled</a-option>
+            </a-select>
+            <a-button type="primary">搜索</a-button>
+         </a-space>
+
+
+        <a-table :columns="columns" :data="data.list" @row-dblclick="doubleClickRow" />
+      </div>
     </a-layout-content>
   </a-layout>
 
@@ -43,8 +54,8 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
-
+import { reactive,ref,onMounted } from 'vue';
+import request from '../utils/request'
 export default {
   setup() {
     const doubleClickRow = (row)=> {
@@ -78,42 +89,73 @@ export default {
         width: 100,
       },
     ];
-    const data = reactive([{
-      key: '1',
-      name: 'chr_Guiboshi',
-      projectName: 'FPCW_Asset',
-      project: 'FPCW',
-      stage: '模型'
-    }, {
-      key: '2',
-      name: 'chr_Guiboshi',
-      projectName: 'FPCW_Asset',
-      project: 'FPCW',
-      stage: '模型'
-    }, {
-      key: '3',
-      name: 'chr_Guiboshi',
-      projectName: 'FPCW_Asset',
-      project: 'FPCW',
-      stage: '模型'
-    }, {
-      key: '4',
-      name: 'chr_Guiboshi',
-      projectName: 'FPCW_Asset',
-      project: 'FPCW',
-      stage: '模型'
-    }, {
-      key: '5',
-      name: 'chr_Guiboshi',
-      projectName: 'FPCW_Asset',
-      project: 'FPCW',
-      stage: '模型'
-    }]);
+    const data = reactive({
+      list:[],
+      projects:[]
+    });
+
+
+    const userInfoForm = reactive({
+      userName: '',
+      accessToken: ''
+    })
+
+    const apiUrl = ref('')
+
+    onMounted(async () => {
+      const defaultConfig = await window.intel_configs.get("user_info")
+      if (defaultConfig!=null) {
+        const existedUserInfoConfig = JSON.parse(defaultConfig)
+        userInfoForm.userName = existedUserInfoConfig.userName
+        userInfoForm.accessToken = existedUserInfoConfig.accessToken
+      }
+
+      const teamConfig = await window.intel_configs.get("current_team_setting")
+      if (teamConfig!=null) {
+        const existedTeamInfoConfig = JSON.parse(teamConfig)
+        apiUrl.value = existedTeamInfoConfig.apiUrl
+      }
+
+      console.log(userInfoForm.accessToken)
+
+      getAllProjects().then(ret1=>{
+        data.projects = ret1
+        getMyAllTasks().then(ret2=>{
+           data.list = ret2
+           for (let i=0;i<data.list.length;i++) {
+                for (let j=0;j<data.projects.length;j++) {
+                   if (data.list[i].projectName === data.projects[j].name) {
+                     data.list[i].project = data.projects[j].projectAlias+"("+data.projects[j].project+")";
+                     break;
+                   }
+                }
+           }
+      })
+      })
+
+    });
+
+
+
+       const getMyAllTasks = ()=>{
+            const payload = {"user":userInfoForm.userName}
+            console.log(apiUrl.value+"/cgteam/cgteam/getMyAllTasks")
+            return request.post(apiUrl.value+"/cgteam/cgteam/getMyAllTasks",payload)
+       }
+
+
+       const getAllProjects = ()=>{
+            console.log(apiUrl.value+"/cgteam/cgteam/getAllProjects")
+            return request.post(apiUrl.value+"/cgteam/cgteam/getAllProjects",{})
+       }
+
+
 
     return {
       columns,
       data,
-      doubleClickRow
+      doubleClickRow,
+      getMyAllTasks
     }
   },
 }
