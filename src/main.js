@@ -1,5 +1,7 @@
 const { app, BrowserWindow,ipcMain} = require('electron');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
 import autoUpdater from './update'
 const { exec } = require('child_process');
 const Store = require('electron-store');
@@ -17,6 +19,8 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,    // 禁用 Web 安全性限制
+      allowFileAccess: true  // 允许渲染进程访问本地文件
     },
   });
 
@@ -62,6 +66,54 @@ async function handleOpenPlugins (event, pluginName) {
 }
 
 
+async function handleFileWrite (event, fileName,content) {
+  console.log("dddddddddd")
+  fs.writeFile(fileName, content, (err) => {
+    console.log("sssssssss",err)
+    if (err) {
+      return {'status':'error', 'msg':err.message};
+    } else {
+      return {'status':'success', 'msg':'save successfully'};
+    }
+  });
+}
+
+
+async function handleFileRead (event, fileName) {
+  fs.readFile(fileName, 'utf-8', (err, data) => {
+    if (err) {
+      return {'status':'error', 'msg':err.message};
+    } else {
+      return {'status':'success', 'msg':'save successfully','data':data};
+    }
+  });
+}
+
+
+async function handleRootDocument (event) {
+
+
+  const platform = os.platform(); // 获取操作系统平台
+
+  if (platform === 'win32') {
+     const documentsPath = path.join(os.homedir(), 'Documents');
+     return documentsPath
+    // 在这里执行 Windows 特定的操作
+  } else if (platform === 'darwin') {
+    console.log('macOS 操作系统');
+    // 在这里执行 macOS 特定的操作
+  } else if (platform === 'linux') {
+    console.log('Linux 操作系统');
+    // 在这里执行 Linux 特定的操作
+  } else {
+    console.log('未知操作系统');
+    // 处理未知操作系统的情况
+  }
+
+
+}
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -75,7 +127,9 @@ app.on('ready', ()=>{
   });
 
   ipcMain.handle('openPlugin',handleOpenPlugins);
-
+  ipcMain.handle('writeFile',handleFileWrite);
+  ipcMain.handle('readFile',handleFileRead);
+  ipcMain.handle('getRootDocument',handleRootDocument);
 
   createWindow()
 });

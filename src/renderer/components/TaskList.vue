@@ -43,9 +43,10 @@
             </a-select>
             <a-button type="primary">搜索</a-button>
          </a-space>
-
-
-        <a-table :columns="columns" :data="data.list" @row-dblclick="doubleClickRow" />
+        <a-alert style="margin:10px">双击下面的任务，会自动开启DCC软件，进入制作</a-alert>
+        <a-spin :loading="loading" dot >
+            <a-table :columns="columns" :data="data.list" @row-dblclick="doubleClickRow" />
+        </a-spin>
       </div>
     </a-layout-content>
   </a-layout>
@@ -58,9 +59,39 @@ import { reactive,ref,onMounted } from 'vue';
 import request from '../utils/request'
 export default {
   setup() {
-    const doubleClickRow = (row)=> {
-      window.alert(row.name)
+    const doubleClickRow = async (row)=> {
+     
+     loading.value = true
+     let currentProject;
+
+     for (let j=0;j<data.projects.length;j++) {
+              if (row.projectName === data.projects[j].name) {
+                  currentProject = data.projects[j]
+                   break;
+               }
+           }
+      
+      const documentPath = await window.envs.getRootDocument()
+
+      window.files.write(documentPath+"\\CGTeam\\CGClientMayaSwap.ini",
+      JSON.stringify( 
+      {
+        "myRootURL":"http://api.cgyun.cn/system/user/login",
+        "myProxyURL": "http://cgyun.cn",
+        "accessToken": userInfoForm.accessToken,
+        "teamInfo":  userInfoForm.team,
+        "userName": userInfoForm.userName,
+        "assetStorageDir":storageForm.assetStorage,
+        "storageDir":storageForm.projectStorage,
+         "currentTask":row,
+        "currentProject":currentProject,
+        "loadFlag":true,
+        "textureReadFlag":true,
+        "taskTextureFileID":row.textureFileID
+      }))      
       window.plugins.open("maya2018")
+
+      loading.value = false
     }
     const columns = [
       {
@@ -77,7 +108,7 @@ export default {
       },
       {
         title: '项目名',
-        dataIndex: 'project',
+        dataIndex: 'parentProject',
         ellipsis: true,
         width: 150,
       },
@@ -97,13 +128,29 @@ export default {
 
     const userInfoForm = reactive({
       userName: '',
-      accessToken: ''
+      accessToken: '',
+      team:''
+    })
+
+    const storageForm = reactive({
+      assetStorage: '',
+      projectStorage: '',
     })
 
     const apiUrl = ref('')
-
+    const loading = ref(false)
     onMounted(async () => {
-      const defaultConfig = await window.intel_configs.get("user_info")
+
+      let defaultConfig = await window.intel_configs.get("local_storage_setting")
+      if (defaultConfig!=null) {
+        const existedStorageConfig = JSON.parse(defaultConfig)
+        storageForm.assetStorage = existedStorageConfig.assetStorage
+        storageForm.projectStorage = existedStorageConfig.projectStorage
+      }
+
+
+
+      defaultConfig = await window.intel_configs.get("user_info")
       if (defaultConfig!=null) {
         const existedUserInfoConfig = JSON.parse(defaultConfig)
         userInfoForm.userName = existedUserInfoConfig.userName
@@ -113,11 +160,10 @@ export default {
       const teamConfig = await window.intel_configs.get("current_team_setting")
       if (teamConfig!=null) {
         const existedTeamInfoConfig = JSON.parse(teamConfig)
+        userInfoForm.team = existedTeamInfoConfig
         apiUrl.value = existedTeamInfoConfig.apiUrl
       }
-
-      console.log(userInfoForm.accessToken)
-
+      loading.value = true
       getAllProjects().then(ret1=>{
         data.projects = ret1
         getMyAllTasks().then(ret2=>{
@@ -125,11 +171,12 @@ export default {
            for (let i=0;i<data.list.length;i++) {
                 for (let j=0;j<data.projects.length;j++) {
                    if (data.list[i].projectName === data.projects[j].name) {
-                     data.list[i].project = data.projects[j].projectAlias+"("+data.projects[j].project+")";
+                     data.list[i].parentProject = data.projects[j].projectAlias+"("+data.projects[j].project+")";
                      break;
                    }
                 }
            }
+           loading.value = false
       })
       })
 
@@ -154,6 +201,7 @@ export default {
     return {
       columns,
       data,
+      loading,
       doubleClickRow,
       getMyAllTasks
     }

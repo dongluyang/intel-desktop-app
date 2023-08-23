@@ -20,3 +20,13 @@ contextBridge.exposeInMainWorld('intel_configs', {
 contextBridge.exposeInMainWorld('plugins', {
   open: (name) => ipcRenderer.invoke('openPlugin',name),
 })
+
+
+contextBridge.exposeInMainWorld('files', {
+  write: (fileName,content) => ipcRenderer.invoke('writeFile',fileName,content),
+  read: (fileName) => ipcRenderer.invoke('readFile',fileName),
+})
+
+contextBridge.exposeInMainWorld('envs', {
+  getRootDocument: () => ipcRenderer.invoke('getRootDocument'),
+})
