@@ -35,17 +35,14 @@
     <a-layout-content>
       <div style="padding: 10px;">
          <a-space direction="horizontal" size="large" style="margin:10px" >
-            <a-select :style="{width:'320px'}" placeholder="请选择项目">
-              <a-option>Beijing</a-option>
-              <a-option>Shanghai</a-option>
-              <a-option>Guangzhou</a-option>
-              <a-option disabled>Disabled</a-option>
+            <a-select v-model="keyword" :style="{width:'320px'}" placeholder="请选择项目" allow-search allow-clear>
+              <a-option v-for="project in data.projects" :value="project.name" :label="project.name" ></a-option>
             </a-select>
-            <a-button type="primary">搜索</a-button>
+            <a-button type="primary" @click="searchTasks">搜索</a-button>
          </a-space>
         <a-alert style="margin:10px">双击下面的任务，会自动开启DCC软件，进入制作</a-alert>
         <a-spin :loading="loading" dot >
-            <a-table :columns="columns" :data="data.list" @row-dblclick="doubleClickRow" />
+            <a-table :columns="columns" :data="data.taskList" @row-dblclick="doubleClickRow" />
         </a-spin>
       </div>
     </a-layout-content>
@@ -122,10 +119,11 @@ export default {
     ];
     const data = reactive({
       list:[],
-      projects:[]
+      projects:[],
+      taskList:[]
     });
 
-
+    
     const userInfoForm = reactive({
       userName: '',
       accessToken: '',
@@ -139,6 +137,16 @@ export default {
 
     const apiUrl = ref('')
     const loading = ref(false)
+    const keyword = ref('')
+
+    const searchTasks = () => {
+        if (keyword.value=='') {
+          data.taskList = data.list
+        } else {
+          data.taskList = data.list.filter(p=>p.projectName==keyword.value)
+        }
+    }
+
     onMounted(async () => {
 
       let defaultConfig = await window.intel_configs.get("local_storage_setting")
@@ -176,6 +184,7 @@ export default {
                    }
                 }
            }
+           data.taskList = data.list
            loading.value = false
       })
       })
@@ -202,8 +211,10 @@ export default {
       columns,
       data,
       loading,
+      keyword,
       doubleClickRow,
-      getMyAllTasks
+      getMyAllTasks,
+      searchTasks
     }
   },
 }
