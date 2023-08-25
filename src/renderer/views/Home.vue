@@ -62,6 +62,7 @@ const updatePassword = (input) => {
     if (userName.value!='' && password.value!='') {
     login().then(resp=>{
            teamList.value = resp.data.teams
+           window.intel_configs.save("teams_info",JSON.stringify(teamList.value))
            const accessToken = resp.data.accessToken
            window.intel_configs.save("user_info",JSON.stringify({"accessToken":accessToken,"userName":userName.value}))
            showTeamSelect.value = true

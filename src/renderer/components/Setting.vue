@@ -32,13 +32,11 @@
   <a-form :model="teamForm" :style="{width:'600px'}" auto-label-width @submit="handleSubmit">
     <a-form-item field="groupId" label="团队">
       <a-select v-model="teamForm.groupId" placeholder="请选择团队" allow-clear>
-        <a-option value="section one">人鱼精灵</a-option>
-        <a-option value="section two">Section Two</a-option>
-        <a-option value="section three">Section Three</a-option>
+        <a-option v-for="item of teamForm.teams" :value="item.id" :label="item.groupName" />
       </a-select>
     </a-form-item>
     <a-form-item>
-      <a-button html-type="submit">切换</a-button>
+      <a-button @click="handleTeamSelectOk">切换</a-button>
     </a-form-item>
   </a-form>
 </template>
@@ -58,11 +56,21 @@ export default {
     })
     const teamForm = reactive({
       groupId: '',
+      teams:[]
     })
 
     const handleSubmit = (data) => {
       console.log(data)
     }
+
+
+  const handleTeamSelectOk = () => {
+
+    if (teamForm.groupId!='') {
+      const team = teamForm.teams.find(obj => obj.id === teamForm.groupId);
+      window.intel_configs.save("current_team_setting",JSON.stringify(team))
+    }
+  };
 
     const saveLocalConfig = ()=>{
            window.intel_configs.save("local_storage_setting",JSON.stringify(storageForm))
@@ -76,7 +84,20 @@ export default {
         storageForm.projectStorage = existedStorageConfig.projectStorage
       }
      
-      console.log(storageForm)
+      const teamsConfig = await window.intel_configs.get("teams_info")
+
+      if (teamsConfig!=null) {
+       teamForm.teams = JSON.parse(teamsConfig)
+      }
+
+
+      const currentTeamConfig = await window.intel_configs.get("current_team_setting")
+
+      if (currentTeamConfig!=null) {
+       teamForm.groupId = JSON.parse(currentTeamConfig).id
+      }
+
+
     });
 
     return {
@@ -84,7 +105,8 @@ export default {
       handleSubmit,
       storageForm,
       teamForm,
-      saveLocalConfig
+      saveLocalConfig,
+      handleTeamSelectOk
     }
   },
 }

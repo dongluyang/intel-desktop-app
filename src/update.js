@@ -40,7 +40,13 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDa
     //   autoUpdater.quitAndInstall()
     // })
 
-
+    console.log('Update downloaded');
+    console.log('Release Notes:', releaseNotes);
+    console.log('Release Name:', releaseName);
+    console.log('Release Date:', releaseDate);
+    console.log('Update URL:', updateUrl);
+    console.log('Update Event:', event);
+    console.log('quitAndUpdate:', quitAndUpdate);
     dialog.showMessageBox({
         type: 'info',
         title: '软件更新',
