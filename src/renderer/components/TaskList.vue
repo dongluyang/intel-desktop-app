@@ -57,7 +57,7 @@ import request from '../utils/request'
 export default {
   setup() {
     const doubleClickRow = async (row)=> {
-     
+
      loading.value = true
      let currentProject;
 
@@ -67,11 +67,11 @@ export default {
                    break;
                }
            }
-      
+
       const documentPath = await window.envs.getRootDocument()
 
       window.files.write(documentPath+"\\CGTeam\\CGClientMayaSwap.ini",
-      JSON.stringify( 
+      JSON.stringify(
       {
         "myRootURL":"http://api.cgyun.cn/system/user/login",
         "myProxyURL": "http://cgyun.cn",
@@ -85,7 +85,7 @@ export default {
         "loadFlag":true,
         "textureReadFlag":true,
         "taskTextureFileID":row.textureFileID
-      }))      
+      }))
       window.plugins.open("maya2018")
 
       loading.value = false
@@ -123,7 +123,7 @@ export default {
       taskList:[]
     });
 
-    
+
     const userInfoForm = reactive({
       userName: '',
       accessToken: '',
@@ -172,22 +172,26 @@ export default {
         apiUrl.value = existedTeamInfoConfig.apiUrl
       }
       loading.value = true
-      getAllProjects().then(ret1=>{
-        data.projects = ret1
-        getMyAllTasks().then(ret2=>{
-           data.list = ret2
-           for (let i=0;i<data.list.length;i++) {
-                for (let j=0;j<data.projects.length;j++) {
-                   if (data.list[i].projectName === data.projects[j].name) {
-                     data.list[i].parentProject = data.projects[j].projectAlias+"("+data.projects[j].project+")";
-                     break;
-                   }
+      if (userInfoForm.accessToken!='') {
+        getAllProjects().then(ret1 => {
+          data.projects = ret1
+          getMyAllTasks().then(ret2 => {
+            data.list = ret2
+            for (let i = 0; i < data.list.length; i++) {
+              for (let j = 0; j < data.projects.length; j++) {
+                if (data.list[i].projectName === data.projects[j].name) {
+                  data.list[i].parentProject = data.projects[j].projectAlias + "(" + data.projects[j].project + ")";
+                  break;
                 }
-           }
-           data.taskList = data.list
-           loading.value = false
-      })
-      })
+              }
+            }
+            data.taskList = data.list
+            loading.value = false
+          })
+        })
+      } else {
+        loading.value = false
+      }
 
     });
 

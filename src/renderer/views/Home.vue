@@ -21,13 +21,19 @@
     }
   }
 
-  onMounted(() => {
+  onMounted(async () => {
+    const defaultConfig = await window.intel_configs.get("user_info")
+    if (defaultConfig!=null) {
+      const existedUserInfoConfig = JSON.parse(defaultConfig)
+      accessToken.value = existedUserInfoConfig.accessToken
+    }
     router.replace({path:'/pending_tasks'});
   })
 
   const showLogin = ref(false);
   const showTeamSelect = ref(false);
   const userName = ref('');
+  const accessToken = ref('');
   const password = ref('');
   const teamList = ref([]);
 
@@ -58,13 +64,18 @@ const updatePassword = (input) => {
     showLogin.value = true;
   };
 
+  const onLogout = ()=>{
+    window.intel_configs.save("user_info",JSON.stringify({"accessToken":'',"userName":''}))
+    window.location.reload()
+  };
+
   const handleOk = (done) => {
     if (userName.value!='' && password.value!='') {
     login().then(resp=>{
            teamList.value = resp.data.teams
            window.intel_configs.save("teams_info",JSON.stringify(teamList.value))
-           const accessToken = resp.data.accessToken
-           window.intel_configs.save("user_info",JSON.stringify({"accessToken":accessToken,"userName":userName.value}))
+           accessToken.value = resp.data.accessToken
+           window.intel_configs.save("user_info",JSON.stringify({"accessToken":accessToken.value,"userName":userName.value}))
            showTeamSelect.value = true
            done(true)
       }).catch(error=>{
@@ -116,7 +127,7 @@ const updatePassword = (input) => {
 
     <a-tab-pane key="3">
       <template #title>
-        <icon-calendar/> 应用脚本
+        <icon-calendar/> 应用中心
       </template>
     </a-tab-pane>
 
@@ -128,9 +139,18 @@ const updatePassword = (input) => {
     </a-tab-pane>
    </a-tabs>
 
+   <div class="about-login" v-if="accessToken!=''">
+     <div class="user">{{userName}}</div>
+     <div class="logOut">
+       <a-popconfirm content="你确定要退出吗?" @ok="onLogout">
+         <a-button type="primary">退出登录</a-button>
+       </a-popconfirm>
+     </div>
+   </div>
+
    <div style="padding: 10px;"><router-view /></div>
 
-   <a-button type="primary" class="floating-button larger-button" size="medium" @click="openDialog">登录</a-button>
+   <a-button v-if="accessToken==''"  type="primary" class="floating-button larger-button" size="medium" @click="openDialog">登录</a-button>
    <a-modal v-model:visible="showLogin" :on-before-ok="handleOk" @cancel="handleCancel">
      <template #title>
        登录系统
@@ -149,7 +169,7 @@ const updatePassword = (input) => {
         <a-select  v-model="form.groupId" :style="{width:'320px'}" placeholder="请选择团队">
             <a-option v-for="item of teamList" :value="item.id" :label="item.groupName" />
         </a-select>
-      </a-form-item>  
+      </a-form-item>
      </a-form>
    </a-modal>
 
@@ -182,4 +202,15 @@ const updatePassword = (input) => {
   padding: 10px;
   /*background-color: var(--color-neutral-2);*/
 }
+.about-login{
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  right: 20px;
+}
+.about-login .logOut{
+  margin-left: 20px;
+}
 </style>
+
