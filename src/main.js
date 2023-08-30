@@ -59,7 +59,7 @@ async function handlePing (event, keyword) {
 
 async function handleOpenPlugins (event, pluginName) {
 
-  if (pluginName.toLowerCase.indexOf("maya")!=-1) {
+  if (pluginName.toLowerCase().indexOf("maya")!=-1) {
       const version = pluginName.substr(4)
       // 创建注册表项的访问路径
       const regKey = new registry({
