@@ -66,14 +66,13 @@ async function handleOpenPlugins (event, pluginName) {
         hive: registry.HKLM, // 使用HKLM（HKEY_LOCAL_MACHINE）
         key: '\\SOFTWARE\\Autodesk\\Maya\\'+version+'\\Setup\\InstallPath' // Maya 2022的注册表路径
       });
-
       // 读取注册表项的值
-      regKey.get('InstallPath', (err, item) => {
+      regKey.get('MAYA_INSTALL_LOCATION', (err, item) => {
         if (err) {
-          console.error('无法读取 Maya 的注册表项', err);
+          console.error('can not read Maya regist form', err);
         } else {
-          const mayaExecutablePath = item.value;
-          console.log('Maya 安装路径：', mayaExecutablePath);
+          const mayaExecutablePath = item.value+'bin\\maya.exe';
+          console.log('Maya path：', mayaExecutablePath);
           exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
             if (error) {
               console.error(`Error opening Maya: ${error}`);
@@ -95,9 +94,7 @@ async function handleOpenPlugins (event, pluginName) {
 
 
 async function handleFileWrite (event, fileName,content) {
-  console.log("dddddddddd")
   fs.writeFile(fileName, content, (err) => {
-    console.log("sssssssss",err)
     if (err) {
       return {'status':'error', 'msg':err.message};
     } else {
