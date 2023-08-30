@@ -2,8 +2,9 @@ const { app, BrowserWindow,ipcMain} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-import autoUpdater from './update'
+// import autoUpdater from './update'
 const { exec } = require('child_process');
+const registry = require('winreg');
 const Store = require('electron-store');
 const store = new Store();
 
@@ -39,10 +40,10 @@ const createWindow = () => {
   // })
 
   mainWindow.once('ready-to-show', () => {
-        
-    autoUpdater.autoDownload = false
 
-    autoUpdater.checkForUpdates()
+    // autoUpdater.autoDownload = false
+    //
+    // autoUpdater.checkForUpdates()
 
   });
 
@@ -57,12 +58,39 @@ async function handlePing (event, keyword) {
 
 
 async function handleOpenPlugins (event, pluginName) {
-  const mayaExecutablePath = 'C:\\Program Files\\Autodesk\\Maya2018\\bin\\maya.exe'; // Update this path
-  exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error opening Maya: ${error}`);
-    }
-  });
+
+  if (pluginName.toLowerCase.indexOf("maya")!=-1) {
+      const version = pluginName.substr(4)
+      // 创建注册表项的访问路径
+      const regKey = new registry({
+        hive: registry.HKLM, // 使用HKLM（HKEY_LOCAL_MACHINE）
+        key: '\\SOFTWARE\\Autodesk\\Maya\\'+version+'\\Setup\\InstallPath' // Maya 2022的注册表路径
+      });
+
+      // 读取注册表项的值
+      regKey.get('InstallPath', (err, item) => {
+        if (err) {
+          console.error('无法读取 Maya 的注册表项', err);
+        } else {
+          const mayaExecutablePath = item.value;
+          console.log('Maya 安装路径：', mayaExecutablePath);
+          exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
+            if (error) {
+              console.error(`Error opening Maya: ${error}`);
+            }
+          });
+          // 在这里您可以使用 Maya 的安装路径进行其他操作
+        }
+      });
+  }
+
+
+  // const mayaExecutablePath = 'C:\\Program Files\\Autodesk\\Maya2018\\bin\\maya.exe'; // Update this path
+  // exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.error(`Error opening Maya: ${error}`);
+  //   }
+  // });
 }
 
 
