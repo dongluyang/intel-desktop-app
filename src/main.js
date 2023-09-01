@@ -75,7 +75,7 @@ async function handleOpenPlugins (event, pluginName) {
           console.log('Maya path：', mayaExecutablePath);
           exec(`"${mayaExecutablePath}"`, (error, stdout, stderr) => {
             if (error) {
-              console.error(`Error opening Maya: ${error}`);
+              window.alert(`Error opening Maya: ${error}`);
             }
           });
           // 在这里您可以使用 Maya 的安装路径进行其他操作

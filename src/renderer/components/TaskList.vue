@@ -86,7 +86,8 @@ export default {
         "textureReadFlag":true,
         "taskTextureFileID":row.textureFileID
       }))
-      window.plugins.open("maya2018")
+      console.log(row.designTool)
+      window.plugins.open(row.designTool)
 
       loading.value = false
     }
