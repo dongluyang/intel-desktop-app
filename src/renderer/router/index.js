@@ -8,6 +8,7 @@ import TaskList from "../components/TaskList.vue"
 import PluginList from "../components/PluginList.vue"
 import ScriptList from "../components/ScriptList.vue"
 import Setting from "../components/Setting.vue"
+import Rembg from "../apps/Rembg.vue"
 const About = { template: '<div>About</div>' }
 
 const routes = [
@@ -30,6 +31,10 @@ const routes = [
             {
                 path: '/setting',
                 component: Setting, // 子路由组件
+            },
+            {
+                path: '/rembg',
+                component: Rembg, // 子路由组件
             }
         ]
     },
