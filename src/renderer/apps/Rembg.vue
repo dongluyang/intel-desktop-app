@@ -1,24 +1,19 @@
 <template>
   <div>
+   <a-form>
+         <a-form-item field="name" label="源目录">
+           <a-button id='openBtn' @click="openSrcDirectory" type="primary">  {{srcDir}}</a-button>
+         </a-form-item>
 
-  <a-space direction="horizontal" :style="{ width: '100%' }">
-    <a-upload  :auto-upload="false" @change="onChange" directory>
+         <a-form-item field="name" label="存储目录">
+           <a-button id='openBtn' @click="openDistDirectory" type="primary" status="success">  {{distDir}}</a-button>
+         </a-form-item>
 
-      <template #upload-button>
-        <a-space>
-          <a-button>选择源目录</a-button>
-        </a-space>
-      </template>
+        <a-form-item>
+            <a-button @click="rembgExec">提交</a-button>
+        </a-form-item>
 
-
-    </a-upload>
-  </a-space>
-
-
-    <!-- 确认按钮 -->
-    <div class="confirm-button">
-      <arco-button type="primary" @click="handleConfirm">确认</arco-button>
-    </div>
+    </a-form>
   </div>
 </template>
 
@@ -29,13 +24,33 @@ import { reactive,ref,onMounted } from 'vue';
 export default {
   setup() {
    const files = ref([]);
+   const srcDir = ref('选择处理目录')
+   const distDir = ref('选择存储目录')
    const onChange = (fileList)=> {
       files.value = fileList;
    }
 
+
+   const openSrcDirectory = async ()=>{
+      srcDir.value = await window.files.open_directory()
+   }
+
+   const openDistDirectory = async ()=>{
+      distDir.value = await window.files.open_directory()
+   }
+
+    const rembgExec = async ()=>{
+       await window.rembg.exec_p(srcDir.value,distDir.value)
+   }
+
+
     return {
        files, 
-       onChange
+       srcDir,
+       distDir,
+       openSrcDirectory,
+       openDistDirectory,
+       rembgExec
     }
   },
 }

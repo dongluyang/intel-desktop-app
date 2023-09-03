@@ -25,8 +25,13 @@ contextBridge.exposeInMainWorld('plugins', {
 contextBridge.exposeInMainWorld('files', {
   write: (fileName,content) => ipcRenderer.invoke('writeFile',fileName,content),
   read: (fileName) => ipcRenderer.invoke('readFile',fileName),
+  open_directory: () => ipcRenderer.invoke('selectDirectory'),
 })
 
 contextBridge.exposeInMainWorld('envs', {
   getRootDocument: () => ipcRenderer.invoke('getRootDocument'),
+})
+
+contextBridge.exposeInMainWorld('rembg', {
+  exec_p: (srcDir,distDir) => ipcRenderer.invoke('doRembgExec',srcDir,distDir),
 })

@@ -4,8 +4,6 @@ import { ref,reactive } from "vue";
 const keyword = ref('')
 const scripts = [
   {title:'Rembg抠像',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
-  {title:'Maya2019',desc:'CgYun发布CgYun发布CgYun发布CgYun发布',time:'2021-03-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  {title:'Nuke',desc:'CgYun发布',time:'2023-06-06',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'}
   ]
 const router = useRouter();
 

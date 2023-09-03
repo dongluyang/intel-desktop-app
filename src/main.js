@@ -1,4 +1,4 @@
-const { app, BrowserWindow,ipcMain} = require('electron');
+const { app, BrowserWindow,ipcMain,dialog} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -93,6 +93,28 @@ async function handleOpenPlugins (event, pluginName) {
 }
 
 
+
+async function handleRembgExec (event, srcDir,distDir) {
+
+  const customPath = 'C:\\Users\\panpa\\PycharmProjects\\microspeed\\venv\\Scripts\\'
+  // 设置命令执行的选项，包括工作目录和环境变量
+  const options = {
+    env: { PATH: customPath+path.delimiter+process.env.PATH},
+  };
+
+  // 要执行的命令和参数
+  const command = 'rembg';
+  const args = ['p',srcDir,distDir];
+  const rembgExecutablePath = 'rembg --version '; 
+  exec(`${command} ${args.join(' ')}`,options, (error, stdout, stderr) => {
+    if (error) {
+      console.log(JSON.stringify(error))
+      console.error(`Error exec rembg: ${error}`);
+    }
+  });
+}
+
+
 async function handleFileWrite (event, fileName,content) {
   fs.writeFile(fileName, content, (err) => {
     if (err) {
@@ -135,7 +157,30 @@ async function handleRootDocument (event) {
     // 处理未知操作系统的情况
   }
 
+}
 
+// 添加一个事件处理程序以选择文件夹
+async function selectDirectory() {
+  let selectedDirectory;
+ await dialog
+    .showOpenDialog(mainWindow, {
+      properties: ['openDirectory'],
+      filters: [
+        { name: 'Images', extensions: ['png', 'gif','jpeg'] },
+      ]
+    })
+    .then((result) => {
+      if (!result.canceled && result.filePaths.length > 0) {
+        selectedDirectory = result.filePaths[0];
+        // 在这里可以使用选定的目录进行进一步处理
+        console.log(`选定的目录是：${selectedDirectory}`);
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+
+    return selectedDirectory
 }
 
 
@@ -155,7 +200,8 @@ app.on('ready', ()=>{
   ipcMain.handle('writeFile',handleFileWrite);
   ipcMain.handle('readFile',handleFileRead);
   ipcMain.handle('getRootDocument',handleRootDocument);
-
+  ipcMain.handle('selectDirectory',selectDirectory)
+  ipcMain.handle('doRembgExec',handleRembgExec)
   createWindow()
 });
 
