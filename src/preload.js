@@ -25,7 +25,8 @@ contextBridge.exposeInMainWorld('plugins', {
 contextBridge.exposeInMainWorld('files', {
   write: (fileName,content) => ipcRenderer.invoke('writeFile',fileName,content),
   read: (fileName) => ipcRenderer.invoke('readFile',fileName),
-  open_directory: () => ipcRenderer.invoke('selectDirectory'),
+  select_directory: () => ipcRenderer.invoke('selectDirectory'),
+  open_directory: (directoryName) => ipcRenderer.invoke('openFolder',directoryName),
 })
 
 contextBridge.exposeInMainWorld('envs', {

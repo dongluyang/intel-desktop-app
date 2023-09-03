@@ -1,9 +1,9 @@
-const { app, BrowserWindow,ipcMain,dialog} = require('electron');
+const { app, BrowserWindow,ipcMain,dialog,shell} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 // import autoUpdater from './update'
-const { exec } = require('child_process');
+const { exec,execSync } = require('child_process');
 const registry = require('winreg');
 const Store = require('electron-store');
 const store = new Store();
@@ -100,18 +100,21 @@ async function handleRembgExec (event, srcDir,distDir) {
   // 设置命令执行的选项，包括工作目录和环境变量
   const options = {
     env: { PATH: customPath+path.delimiter+process.env.PATH},
+    encoding: 'utf-8'
   };
 
   // 要执行的命令和参数
   const command = 'rembg';
   const args = ['p',srcDir,distDir];
-  const rembgExecutablePath = 'rembg --version '; 
-  exec(`${command} ${args.join(' ')}`,options, (error, stdout, stderr) => {
-    if (error) {
-      console.log(JSON.stringify(error))
-      console.error(`Error exec rembg: ${error}`);
-    }
-  });
+
+  try {
+    // 同步执行命令
+    const output = execSync(`${command} ${args.join(' ')}`, options);
+    console.log(`命令输出：\n${output}`);
+    return output
+  } catch (error) {
+    console.error(`执行命令时发生错误： ${error.message}`);
+  }
 }
 
 
@@ -162,6 +165,7 @@ async function handleRootDocument (event) {
 // 添加一个事件处理程序以选择文件夹
 async function selectDirectory() {
   let selectedDirectory;
+  let fileList = [];
  await dialog
     .showOpenDialog(mainWindow, {
       properties: ['openDirectory'],
@@ -173,15 +177,61 @@ async function selectDirectory() {
       if (!result.canceled && result.filePaths.length > 0) {
         selectedDirectory = result.filePaths[0];
         // 在这里可以使用选定的目录进行进一步处理
-        console.log(`选定的目录是：${selectedDirectory}`);
+
+        try {
+          // 使用fs.readdirSync来同步获取目录下的文件列表
+          const files = fs.readdirSync(selectedDirectory);
+        
+          // 遍历文件列表，获取每个文件的属性
+          files.forEach((file) => {
+            const filePath = path.join(selectedDirectory, file);
+        
+            // 使用fs.statSync来同步获取文件的属性
+            const stats = fs.statSync(filePath);
+        
+            // 获取文件大小（以字节为单位）
+            const fileSizeInBytes = stats.size;
+        
+            // 可以将文件大小进行格式化，例如转换为KB、MB等等
+            const fileSizeInKB = fileSizeInBytes / 1024;
+            const fileSizeInMB = fileSizeInKB / 1024;
+            const fileSize = fileSizeInMB>=1?fileSizeInMB.toFixed(2)+"MB":fileSizeInKB.toFixed(2)+"KB";
+            fileList.push({name:file,size:fileSize});
+            // console.log(`文件名：${file}`);
+            // console.log(`文件路径：${filePath}`);
+            // console.log(`文件大小（字节）：${fileSizeInBytes}`);
+            // console.log(`文件大小（KB）：${fileSizeInKB}`);
+            // console.log(`文件大小（MB）：${fileSizeInMB}`);
+            // console.log('-------------------');
+          });
+        } catch (err) {
+          console.error(`读取目录 ${directoryPath} 失败：${err}`);
+        }
+
+
       }
     })
     .catch((err) => {
       console.error(err);
     });
 
-    return selectedDirectory
+    return {"dir":selectedDirectory,"files":fileList}
 }
+
+
+async function openFolder(event,folderPath) {
+  // const folderPath = path.dirname(filePath);
+  // 使用shell.openPath来打开所在文件夹
+  await shell.openPath(folderPath)
+    .then(() => {
+      console.log(`已打开文件夹：${folderPath}`);
+    })
+    .catch((err) => {
+      console.error(`打开文件夹时发生错误：${err}`);
+      return false
+    });
+  return true
+};
 
 
 // This method will be called when Electron has finished
@@ -202,6 +252,7 @@ app.on('ready', ()=>{
   ipcMain.handle('getRootDocument',handleRootDocument);
   ipcMain.handle('selectDirectory',selectDirectory)
   ipcMain.handle('doRembgExec',handleRembgExec)
+  ipcMain.handle('openFolder',openFolder)
   createWindow()
 });
 
