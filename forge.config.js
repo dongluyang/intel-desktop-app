@@ -1,5 +1,5 @@
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {"extraResources": "./resources/rembg.exe"},
   rebuildConfig: {},
   makers: [
     {

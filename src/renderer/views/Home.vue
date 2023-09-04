@@ -26,6 +26,7 @@
     if (defaultConfig!=null) {
       const existedUserInfoConfig = JSON.parse(defaultConfig)
       accessToken.value = existedUserInfoConfig.accessToken
+      userName.value = existedUserInfoConfig.userName
     }
     router.replace({path:'/pending_tasks'});
   })

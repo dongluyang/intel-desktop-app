@@ -2,12 +2,13 @@ const { app, BrowserWindow,ipcMain,dialog,shell} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const isDev = require('electron-is-dev');
 // import autoUpdater from './update'
 const { exec,execSync } = require('child_process');
 const registry = require('winreg');
 const Store = require('electron-store');
 const store = new Store();
-
+const log = require("electron-log")
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -96,15 +97,26 @@ async function handleOpenPlugins (event, pluginName) {
 
 async function handleRembgExec (event, srcDir,distDir) {
 
-  const customPath = 'C:\\Users\\panpa\\PycharmProjects\\microspeed\\venv\\Scripts\\'
+  // const customPath = 'C:\\Users\\panpa\\PycharmProjects\\microspeed\\venv\\Scripts\\'
   // 设置命令执行的选项，包括工作目录和环境变量
   const options = {
-    env: { PATH: customPath+path.delimiter+process.env.PATH},
+    // env: { PATH: customPath+path.delimiter+process.env.PATH},
     encoding: 'utf-8'
   };
 
+
   // 要执行的命令和参数
-  const command = 'rembg';
+  let command;
+  // const command = path.join(__dirname, 'resources', 'rembg');
+  if (isDev) {
+    // 在开发模式下，`rembg.exe` 可能在项目根目录下或其他位置
+    command = path.join(__dirname, 'resources', 'rembg.exe');
+  } else {
+    // 在生产模式下，`rembg.exe` 位于安装包的 `resources` 文件夹下
+    command = path.join(process.resourcesPath, 'app','resources', 'rembg.exe');
+    log.info(command)
+  }
+  // const command = 'rembg';
   const args = ['p',srcDir,distDir];
 
   try {
