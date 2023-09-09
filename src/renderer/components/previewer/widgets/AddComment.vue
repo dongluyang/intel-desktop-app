@@ -1,10 +1,12 @@
 <template>
   <div class="addCommentOut">
-    <a-input
+    <a-textarea 
       ref="refName"
-      v-model:value="textContent"
-      type="textarea"
+      allow-clear
+      show-word-limit
+      v-model="textContent"
       placeholder="请给予宝贵的意见"
+      :max-length="500"
       @change="updateContent"
     />
 
@@ -35,32 +37,42 @@
 
     <a-upload
       multiple
-      directory-dnd
+      directory
       style="margin-left: 500px"
-      :default-upload="false"
+      :auto-upload="false"
       ref="upload"
       @change="handleChange"
       v-model:file-list="fileList"
     >
-      <n-upload-dragger>
-        <div style="margin-bottom: 12px">
-          <n-icon size="48" :depth="3">
-            <archive-icon />
-          </n-icon>
+
+
+    <template #upload-button>
+      <div
+        style="
+        background-color: var(--color-fill-2);
+        color: var(--color-text-1);
+        border: 1px dashed var(--color-fill-4);
+        height: 158px;
+        width: 380px;
+        border-radius: 2;
+        line-height: 158px;
+        text-align: center;"
+      >
+        <div>
+          <icon-upload /> 点击或者拖动文件到该区域来上传
         </div>
-        <n-text style="font-size: 16px">
-          点击或者拖动文件到该区域来上传
-        </n-text>
-      </n-upload-dragger>
+      </div>
+    </template>
+
     </a-upload>
 
 
 
     <div style="float: right;padding-top: 10px;padding-right: 10px">
-      <n-button size="small" round type="info" @click="passTask" :disabled="!disableSendBack">通过</n-button>
+      <a-button size="small" round type="primary" status="success" @click="passTask" :disabled="!disableSendBack">通过</a-button>
     </div>
     <div style="float: right;padding-top: 10px;padding-right: 10px">
-      <n-button size="small" round type="primary" @click="sendBack" :disabled="disableSendBack">返修</n-button>
+      <a-button size="small" round type="primary" status="warning" @click="sendBack" :disabled="disableSendBack">返修</a-button>
     </div>
 
 
@@ -95,7 +107,8 @@ export default defineComponent({
     var disableSendBack = ref(props.isSendBack)
 
     const updateContent = ()=>{
-       ctx.emit('update:content',refName.value.value) //关键点
+      console.log(refName.value.modelValue)
+       ctx.emit('update:content',refName.value.modelValue) //关键点
     }
 
     // const submitComment = () => {
