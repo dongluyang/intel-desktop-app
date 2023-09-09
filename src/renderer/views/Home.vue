@@ -1,7 +1,7 @@
 <script setup>
   import { useRouter, useRoute } from 'vue-router';
   import { ref,onMounted,reactive } from "vue";
-  import Login from '../components/Login.vue'
+  import Login from './Login.vue'
   import request from '../utils/request'
   const router = useRouter();
   const route = useRoute();

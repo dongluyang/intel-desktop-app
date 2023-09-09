@@ -4,10 +4,10 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 // 1. Define route components.
 // These can be imported from other files
 import Home from '../views/Home.vue'
-import TaskList from "../components/TaskList.vue"
-import PluginList from "../components/PluginList.vue"
-import ScriptList from "../components/ScriptList.vue"
-import Setting from "../components/Setting.vue"
+import TaskList from "../views/TaskList.vue"
+import PluginList from "../views/PluginList.vue"
+import ScriptList from "../views/ScriptList.vue"
+import Setting from "../views/Setting.vue"
 import Rembg from "../apps/Rembg.vue"
 const About = { template: '<div>About</div>' }
 

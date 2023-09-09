@@ -1,0 +1,341 @@
+<template>
+<button
+  :class="{
+    button: true,
+    active: active,
+    small: isSmall,
+    'is-primary': isPrimary,
+    'is-loading': isLoading,
+    'is-on': isOn
+  }"
+  :title="title"
+  @click="$emit('clickEvent')"
+>
+  <corner-left-down-icon
+    :class="iconClass"
+    v-if="icon === 'undo'"
+  />
+  <corner-right-down-icon
+    :class="iconClass"
+    v-if="icon === 'redo'"
+  />
+  <save-icon
+    :class="iconClass"
+    v-if="icon === 'save'"
+  />
+  <plus-icon
+    :class="iconClass"
+    v-if="icon === 'plus'"
+  />
+  <minus-icon
+    :class="iconClass"
+    v-if="icon === 'minus'"
+  />
+  <message-square-icon
+    :class="iconClass"
+    v-if="icon === 'comment'"
+  />
+  <download-icon
+    :class="iconClass"
+    v-if="icon === 'download'"
+  />
+  <square-icon
+    :class="iconClass"
+    v-if="icon === 'square'"
+  ></square-icon>
+
+  <arrow-up-right-icon
+    :class="iconClass"
+    v-if="icon === 'arrow'"
+  ></arrow-up-right-icon>
+
+
+  <upload-icon
+    :class="iconClass"
+    v-if="icon === 'upload'"
+  />
+  <film-icon
+    :class="iconClass"
+    v-if="icon === 'film'"
+  />
+  <play-icon
+    :class="iconClass"
+    v-if="icon === 'play'"
+  />
+  <pause-icon
+    :class="iconClass"
+    v-if="icon === 'pause'"
+  />
+  <edit-icon
+    :class="iconClass"
+    v-if="icon === 'edit'"
+  />
+  <image-icon
+    :class="iconClass"
+    v-if="icon === 'image'"
+  />
+  <maximize-icon
+    :class="iconClass"
+    v-if="icon === 'maximize'"
+  />
+
+  <trash-icon
+    :class="iconClass"
+    v-if="icon === 'delete'"
+  />
+  <rotate-ccw-icon
+    :class="iconClass"
+    v-if="icon === 'restore'"
+  />
+  <skip-back-icon
+    :class="iconClass"
+    v-if="icon === 'back'"
+  />
+  <skip-forward-icon
+    :class="iconClass"
+    v-if="icon === 'forward'"
+  />
+  <chevron-down-icon
+    :class="iconClass"
+    v-if="icon === 'down'"
+  />
+  <chevron-left-icon
+    :class="iconClass"
+    v-if="icon === 'left'"
+  />
+  <chevron-right-icon
+    :class="iconClass"
+    v-if="icon === 'right'"
+  />
+  <copy-icon
+    :class="iconClass"
+    v-if="icon === 'compare'"
+  />
+  <x-icon
+    :class="iconClass"
+    v-if="icon === 'remove'"
+  />
+  <edit2-icon
+    :class="iconClass"
+    v-if="icon === 'pencil'"
+  />
+  <layers-icon
+    :class="iconClass"
+    v-if="icon === 'layers'"
+  />
+  <type-icon
+    :class="iconClass"
+    v-if="icon === 'type'"
+  />
+  <list-icon
+    :class="iconClass"
+    v-if="icon === 'list'"
+  />
+  <filter-icon
+    :class="iconClass"
+    v-if="icon === 'funnel'"
+  />
+  <refresh-cw-icon
+    :class="iconClass"
+    v-if="icon === 'refresh'"
+  />
+  <repeat-icon
+    :class="iconClass"
+    v-if="icon === 'repeat'"
+  />
+  <volume-x-icon
+    :class="iconClass"
+    v-if="icon === 'soundoff'"
+  />
+  <volume-2-icon
+    :class="iconClass"
+    v-if="icon === 'soundon'"
+  />
+
+  <span
+    :class="{
+      text: true,
+      'is-hidden-touch': isResponsive
+    }"
+    v-if="isText"
+  >
+    {{ text }}
+  </span>
+</button>
+</template>
+
+<script>
+
+// import { faMaximize } from "@fortawesome/free-solid-svg-icons/faMaximize";
+// /* import the fontawesome core */
+// import { library } from "@fortawesome/fontawesome-svg-core";
+//
+// library.add(faMaximize);
+
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CornerLeftDownIcon,
+  CornerRightDownIcon,
+  CopyIcon,
+  DownloadIcon,
+  SquareIcon,
+  EditIcon,
+  Edit2Icon,
+  FilmIcon,
+  FilterIcon,
+  ImageIcon,
+  LayersIcon,
+  ListIcon,
+  MaximizeIcon,
+  MessageSquareIcon,
+  MinusIcon,
+  PauseIcon,
+  PlayIcon,
+  PlusIcon,
+  RefreshCwIcon,
+  RepeatIcon,
+  RotateCcwIcon,
+  SaveIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
+  TrashIcon,
+  TypeIcon,
+  UploadIcon,
+  VolumeXIcon,
+  Volume2Icon,
+  XIcon,
+  ArrowUpRightIcon
+} from 'vue-feather-icons'
+
+import featCompt from '../lib/feathercompt';
+featCompt(ChevronDownIcon);featCompt(ChevronLeftIcon);
+featCompt(ChevronRightIcon);featCompt(CornerLeftDownIcon);
+featCompt(CornerRightDownIcon);featCompt(CopyIcon);
+featCompt(DownloadIcon);featCompt(EditIcon);
+featCompt(Edit2Icon);featCompt(FilmIcon);
+featCompt(FilterIcon);featCompt(ImageIcon);
+featCompt(LayersIcon);featCompt(ListIcon);
+featCompt(MaximizeIcon);featCompt(MessageSquareIcon);
+featCompt(MinusIcon);featCompt(PauseIcon);
+featCompt(PlayIcon);featCompt(PlusIcon);
+featCompt(RefreshCwIcon);featCompt(RepeatIcon);
+featCompt(RotateCcwIcon);featCompt(SaveIcon);
+featCompt(SkipBackIcon);featCompt(SkipForwardIcon);
+featCompt(TrashIcon);featCompt(TypeIcon);
+featCompt(UploadIcon);featCompt(VolumeXIcon);
+featCompt(Volume2Icon);featCompt(XIcon);
+featCompt(SquareIcon);featCompt(ArrowUpRightIcon)
+export default {
+  name: 'button-simple',
+  components: {
+    ChevronDownIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    CornerLeftDownIcon,
+    CornerRightDownIcon,
+    CopyIcon,
+    DownloadIcon,
+    SquareIcon,
+    EditIcon,
+    Edit2Icon,
+    FilmIcon,
+    FilterIcon,
+    ImageIcon,
+    LayersIcon,
+    ListIcon,
+    MaximizeIcon,
+    MessageSquareIcon,
+    MinusIcon,
+    PauseIcon,
+    PlayIcon,
+    PlusIcon,
+    RefreshCwIcon,
+    RepeatIcon,
+    RotateCcwIcon,
+    SaveIcon,
+    SkipBackIcon,
+    SkipForwardIcon,
+    TrashIcon,
+    TypeIcon,
+    UploadIcon,
+    VolumeXIcon,
+    Volume2Icon,
+    XIcon,
+    ArrowUpRightIcon
+  },
+
+  props: {
+    active: {
+      default: false,
+      type: Boolean
+    },
+    icon: {
+      default: '',
+      type: String
+    },
+    isOn: {
+      default: false,
+      type: Boolean
+    },
+    isLoading: {
+      default: false,
+      type: Boolean
+    },
+    isPrimary: {
+      default: false,
+      type: Boolean
+    },
+    isResponsive: {
+      default: false,
+      type: Boolean
+    },
+    isSmall: {
+      default: false,
+      type: Boolean
+    },
+    text: {
+      default: '',
+      type: String
+    },
+    title: {
+      default: '',
+      type: String
+    }
+  },
+
+  computed: {
+    isText () {
+      return this.text && this.text.length > 0
+    },
+
+    iconClass () {
+      return {
+        icon: true,
+        'is-small': true,
+        'only-icon': !this.isText
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.icon.is-small.only-icon {
+  margin-right: 0;
+}
+
+.is-primary {
+  border-radius: 2em;
+}
+
+.active {
+  box-shadow: inset 0 0 2px 2px var(--box-shadow)
+}
+
+.small {
+  font-size: 0.8em;
+  padding: 0.4em;
+}
+</style>

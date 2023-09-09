@@ -14,7 +14,7 @@
             @collapse="onCollapse"
         >
           <a-menu-item key="0">
-            <a-button type="text" @click="clickTasks">
+            <a-button type="text" @click="clickTaskList">
               <template #icon>
                 <icon-pen-fill />
               </template>
@@ -22,7 +22,7 @@
             </a-button>
           </a-menu-item>
           <a-menu-item key="1">
-            <a-button type="text">
+            <a-button type="text" @click="clickCheckList">
               <template #icon>
                 <icon-tool />
               </template>
@@ -42,10 +42,41 @@
          </a-space>
         <a-alert style="margin:10px">双击下面的任务，会自动开启DCC软件，进入制作</a-alert>
         <a-spin :loading="loading" dot >
-            <a-table :columns="columns" :data="data.taskList" @row-dblclick="doubleClickRow" />
+            <a-table :columns="columns" :data="data.taskList" @row-dblclick="doubleClickRow">
+
+              <template #action="{ record }">
+                <a-button @click="clickTaskRecord(record)">打开</a-button>
+              </template>
+
+            </a-table>
         </a-spin>
       </div>
     </a-layout-content>
+
+
+
+			<a-drawer 
+             :visible="data.reviewVisible" 
+             width="100%" 
+             :placement="'right'" 
+              @ok="data.reviewVisible=false"
+              @cancel="data.reviewVisible=false"
+             :esc-to-close="false">
+
+          <template #title>
+            {{data.currentTask.name}}
+          </template>
+
+          <div>
+            <taskReview  :task-id="data.currentTask._id" />
+          </div>
+
+				
+			</a-drawer>
+
+
+
+
   </a-layout>
 
 
@@ -54,7 +85,11 @@
 <script>
 import { reactive,ref,onMounted } from 'vue';
 import request from '../utils/request'
+import taskReview from '../components/myCheckin/taskReview.vue'
 export default {
+  components: {
+    taskReview
+  },
   setup() {
     const doubleClickRow = async (row)=> {
 
@@ -117,11 +152,17 @@ export default {
         tooltip: {position: 'left'},
         width: 100,
       },
+      {
+        title: '操作',
+        slotName: 'action'
+      },
     ];
     const data = reactive({
       list:[],
       projects:[],
-      taskList:[]
+      taskList:[],
+      reviewVisible:false,
+      currentTask:{'name':''}
     });
 
 
@@ -196,12 +237,58 @@ export default {
 
     });
 
+      const clickTaskList = ()=>{
+        getMyAllTasks().then(ret2 => {
+            data.list = ret2
+            for (let i = 0; i < data.list.length; i++) {
+              for (let j = 0; j < data.projects.length; j++) {
+                if (data.list[i].projectName === data.projects[j].name) {
+                  data.list[i].parentProject = data.projects[j].projectAlias + "(" + data.projects[j].project + ")";
+                  break;
+                }
+              }
+            }
+            data.taskList = data.list
+            loading.value = false
+          })
+      }
+
+
+      const clickCheckList = ()=>{
+        getMyCheckinTasks().then(ret2 => {
+            data.list = ret2
+            for (let i = 0; i < data.list.length; i++) {
+              for (let j = 0; j < data.projects.length; j++) {
+                if (data.list[i].projectName === data.projects[j].name) {
+                  data.list[i].parentProject = data.projects[j].projectAlias + "(" + data.projects[j].project + ")";
+                  break;
+                }
+              }
+            }
+            data.taskList = data.list
+            loading.value = false
+          })
+      }
+
+      const clickTaskRecord = (record)=>{
+        data.currentTask = record
+        console.log(data.currentTask.name)
+        data.reviewVisible = true
+      }
+
 
 
        const getMyAllTasks = ()=>{
             const payload = {"user":userInfoForm.userName}
             console.log(apiUrl.value+"/cgteam/cgteam/getMyAllTasks")
             return request.post(apiUrl.value+"/cgteam/cgteam/getMyAllTasks",payload)
+       }
+
+
+       const getMyCheckinTasks = ()=>{
+            const payload = {"user":userInfoForm.userName,'status':'work'}
+            console.log(apiUrl.value+"/cgteam/cgteam/getMyCheckinTasks")
+            return request.post(apiUrl.value+"/cgteam/cgteam/getMyCheckinTasks",payload)
        }
 
 
@@ -218,7 +305,9 @@ export default {
       loading,
       keyword,
       doubleClickRow,
-      getMyAllTasks,
+      clickTaskList,
+      clickCheckList,
+      clickTaskRecord,
       searchTasks
     }
   },
