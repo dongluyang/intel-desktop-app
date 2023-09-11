@@ -72,7 +72,6 @@
 		},
 
     setup() {
-      const message = useMessage();
 
       const state = reactive({
         user: '',

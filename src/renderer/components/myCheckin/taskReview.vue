@@ -89,30 +89,18 @@
     </div>
 
 
-    <a-modal v-model:show="showApprove" preset="dialog" title="Dialog">
-      <template #header>
+    <a-modal v-model:visible="showApprove" hideCancel="true" @ok="onSubmitTask">
+      <template #title>
         <div>提示</div>
       </template>
       <div>审核通过！</div>
-      <template #action>
-        <n-button @click="onSubmitTask">
-          确认
-        </n-button>
-      </template>
     </a-modal>
 
-      <a-modal v-model:show="showRollback" preset="dialog" title="Dialog">
-        <template #header>
+      <a-modal v-model:show="showRollback"  hideCancel="true" @ok="onReturnTask">
+        <template #title>
           <div>提示</div>
         </template>
         <div>退回修改?</div>
-        <template #action>
-          <div>
-            <n-button @click="onReturnTask">
-              确认
-            </n-button>
-          </div>
-        </template>
       </a-modal>
 
 

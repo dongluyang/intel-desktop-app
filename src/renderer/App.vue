@@ -25,3 +25,14 @@ const locale = computed(() => {
 const percentage = ref(0);
 const showProgressBar = ref(false);
 </script>
+
+
+<style lang="scss">
+.filler {
+	width: 100%;
+}
+.back-color{
+	background: #fff;
+}
+
+</style>

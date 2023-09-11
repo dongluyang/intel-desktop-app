@@ -105,7 +105,7 @@ export default defineComponent({
     let fileInfoList = ref([])
     let fileList = ref([])
     var disableSendBack = ref(props.isSendBack)
-
+    console.log(disableSendBack)
     const updateContent = ()=>{
       console.log(refName.value.modelValue)
        ctx.emit('update:content',refName.value.modelValue) //关键点
@@ -140,8 +140,8 @@ export default defineComponent({
       // }
     }
 
-    const handleChange = (options) => {
-      fileListLengthRef.value = options.fileList.length;
+    const handleChange = (fileList) => {
+      fileListLengthRef.value = fileList.length;
       if (fileListLengthRef.value > 0)
           ctx.emit("enable-send-back", {})
     }

@@ -40,8 +40,8 @@ export async function postReview(formdata) {
   const config = {
     headers: {'Content-Type': 'multipart/form-data;boundary='+new Date().getTime()}
   }
-  const url = getTeamApiUrl() + '/uploadReturnFileContent';
-
+  const url = await getTeamApiUrl() + '/uploadReturnFileContent';
+  console.log(url)
   // let list = returnList.push(submitId)
 
   // return new Promise((resolve, reject) => {

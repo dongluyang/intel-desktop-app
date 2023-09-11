@@ -1,7 +1,7 @@
 import{getTeamApiUrl} from './global'
 
 export async function getMyAllTasks(userName) {
-    const apiUrl = getTeamApiUrl() + '/getMyAllTasks';
+    const apiUrl = await getTeamApiUrl() + '/getMyAllTasks';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { user: userName })
@@ -17,7 +17,7 @@ export async function getMyAllTasks(userName) {
   
   
   export async function getMyCheckinTasks(userName, status) {
-    const apiUrl = getTeamApiUrl() + '/getMyCheckinTasks';
+    const apiUrl = await getTeamApiUrl() + '/getMyCheckinTasks';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { user: userName, status:status })
@@ -32,7 +32,7 @@ export async function getMyAllTasks(userName) {
 
 
 export async function getSmallFile(id) {
-    const apiUrl = getTeamApiUrl() + '/findSmallFile';
+    const apiUrl = await getTeamApiUrl() + '/findSmallFile';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { id: id })
@@ -47,7 +47,7 @@ export async function getSmallFile(id) {
   
   
   export async function getObsUrl(fileName,taskName,projectName) {
-      const apiUrl = getTeamApiUrl() + '/getObsUrl';
+      const apiUrl = await getTeamApiUrl() + '/getObsUrl';
       return new Promise((resolve, reject) => {
           axios
               .post(apiUrl, { file: fileName,project:projectName,task:taskName })
@@ -62,7 +62,7 @@ export async function getSmallFile(id) {
 
 
 export async function getTaskVersionList(taskId) {
-    const apiUrl = getTeamApiUrl() + '/getAllVersions4Task';
+    const apiUrl = await getTeamApiUrl() + '/getAllVersions4Task';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { taskId: taskId})
@@ -76,7 +76,7 @@ export async function getTaskVersionList(taskId) {
   }
   
   export async function getTaskPreviewList(taskId,v) {
-    const apiUrl = getTeamApiUrl() + '/getTaskPreviews';
+    const apiUrl = await getTeamApiUrl() + '/getTaskPreviews';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { taskId: taskId,v:v})
@@ -90,7 +90,7 @@ export async function getTaskVersionList(taskId) {
   }
   
   export async function updateAnnotations(data) {
-    const apiUrl = getTeamApiUrl() + '/updateAnnotations';
+    const apiUrl = await getTeamApiUrl() + '/updateAnnotations';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, data)
@@ -105,7 +105,7 @@ export async function getTaskVersionList(taskId) {
   
 
   export async function getSubmit(id) {
-    const apiUrl = getTeamApiUrl() + '/getSubmit';
+    const apiUrl = await getTeamApiUrl() + '/getSubmit';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { id: id })
@@ -121,7 +121,7 @@ export async function getTaskVersionList(taskId) {
 
 
   export async function submitTask(id) {
-    const apiUrl = getTeamApiUrl() + '/submitTask';
+    const apiUrl = await getTeamApiUrl() + '/submitTask';
     return new Promise((resolve, reject) => {
       axios
         .post(apiUrl, { id: id })
