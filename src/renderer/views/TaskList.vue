@@ -68,7 +68,7 @@
           </template>
 
           <div>
-            <taskReview  :task-id="data.currentTask._id" />
+            <taskReview v-if="data.reviewVisible" :taskId="data.currentTask._id" />
           </div>
 
 				
@@ -272,8 +272,12 @@ export default {
 
       const clickTaskRecord = (record)=>{
         data.currentTask = record
-        console.log(data.currentTask.name)
-        data.reviewVisible = true
+        console.log(record)
+        if (record.submitStatus=='审验') {
+           data.reviewVisible = true
+        } else {
+          doubleClickRow(record)
+        }
       }
 
 

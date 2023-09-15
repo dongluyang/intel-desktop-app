@@ -237,6 +237,7 @@ export default {
     if (this.$refs['add-comment']) {
       this.$refs['add-comment'].text = this.lastCommentDraft
     }
+    console.log(this.taskId)
     this.getTaskVersions().then(() => {
       if (this.previewVersions.length > 0) {
         this.getTaskPreviewsByVersion(this.previewVersions[0]);
