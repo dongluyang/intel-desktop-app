@@ -26,10 +26,21 @@
     <a-table :columns="columns" :data="files" :style="{width:'600px'}">
 
     <template #action="{ record }">
-      <a-button @click="$modal.info({ title:'文件名', content:record.name })">view</a-button>
+      <a-button @click="viewImageWithCompare">view</a-button>
     </template>
 
     </a-table>
+
+
+
+  <a-modal v-model:visible="visible" :hide-cancel="true" width="90%">
+    <template #title>
+      Title
+    </template>
+      <Image></Image>
+  </a-modal>
+
+
 </a-space>
   </div>
 </template>
@@ -37,8 +48,13 @@
 
 
 <script>
+import Image from '../components/ImageList.vue'
 import { reactive,ref,onMounted } from 'vue';
 export default {
+    //组件的注册
+  components: {
+    Image
+  },
   setup() {
 
     const columns = [
@@ -62,7 +78,14 @@ export default {
    const files = ref([]);
    const srcDir = ref('选择处理目录')
    const distDir = ref('选择存储目录')
-   
+   const visible = ref(false)
+
+
+   const viewImageWithCompare = ()=>{
+      visible.value = true
+   }
+
+
 
    const openSrcDirectory = async ()=>{
       const ret = await window.files.select_directory()
@@ -96,12 +119,14 @@ export default {
        files, 
        srcDir,
        distDir,
+       visible,
        openSrcDirectory,
        openDistDirectory,
        rembgExec,
        columns,
        loading,
-       openFolder
+       openFolder,
+       viewImageWithCompare
     }
   },
 }
