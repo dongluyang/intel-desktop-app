@@ -26,7 +26,7 @@
     <a-table :columns="columns" :data="files" :style="{width:'600px'}">
 
     <template #action="{ record }">
-      <a-button @click="viewImageWithCompare">view</a-button>
+      <a-button @click="viewImageWithCompare(record)">view</a-button>
     </template>
 
     </a-table>
@@ -37,7 +37,7 @@
     <template #title>
       Title
     </template>
-      <Image></Image>
+      <Image v-if="visible" :original="original" :processed="processed"></Image>
   </a-modal>
 
 
@@ -79,10 +79,16 @@ export default {
    const srcDir = ref('选择处理目录')
    const distDir = ref('选择存储目录')
    const visible = ref(false)
+   const original = ref('')
+   const processed = ref('')
 
-
-   const viewImageWithCompare = ()=>{
+   const viewImageWithCompare = (record)=>{
+      original.value = srcDir.value +"\\"+ record.name
+      processed.value = distDir.value +"\\"+ record.name.replace(/\.jpg$/, '.png');
+      console.log(original.value)
+       console.log(processed.value)
       visible.value = true
+
    }
 
 
@@ -126,7 +132,9 @@ export default {
        columns,
        loading,
        openFolder,
-       viewImageWithCompare
+       viewImageWithCompare,
+       original,
+       processed
     }
   },
 }
