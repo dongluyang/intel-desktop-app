@@ -2,62 +2,23 @@
   import { ref,onMounted } from "vue";
   import { defineProps } from 'vue';
   
-const { original, processed } = defineProps(['original', 'processed']);
+const { original, processed,images } = defineProps(['original', 'processed','images']);
 
-  const images = [
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
-  {src:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  ];
+
  // const rightsrc=ref('https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp ');
   const rightsrc = ref(processed)
+  const leftsrc = ref(original)
   const clickMyPic=(index)=>{
-    //rightsrc.value=images[index].src
-
-    var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // 创建并加载图片
-    var foregroundImage  = new Image();
-    foregroundImage.src = rightsrc.value;
-
-    var backgroundImage  = new Image();
-    backgroundImage.src = images[index].src;
-
-
-    // 绘制背景图
-     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-
-     // 设置合成模式为'overlay'（叠加）
-     ctx.globalCompositeOperation = 'overlay';
-
-     // 绘制前景图
-     ctx.drawImage(foregroundImage, 0, 0, canvas.width, canvas.height); // 在Canvas上指定位置和尺寸绘制前景图
-
-      // 恢复默认的合成模式
-     ctx.globalCompositeOperation = 'source-over';
-
+    console.log(images[index])
+    leftsrc.value = images[index].src
+    rightsrc.value=images[index].dest
+  
   }
 
 
-  onMounted(() => {
-    var canvas = document.getElementById("myCanvas");
-    var ctx = canvas.getContext("2d");    
-    // 创建并加载图片
-    var foregroundImage = new Image();
-    foregroundImage.src = rightsrc.value;
-
-     // 等待图片加载完成后执行合成
-    foregroundImage.onload = function () {
-            // 绘制第一张图片
-            ctx.drawImage(foregroundImage, 0, 0, canvas.width, canvas.height);
-     };
+    onMounted(() => {
+      console.log(images)
   })
-
 
 
   const boxLeft=ref(0)
@@ -86,10 +47,10 @@ const { original, processed } = defineProps(['original', 'processed']);
 <template>
   <div class="top-pic">
     <div class="pic left">
-      <img :src="original" alt="">
+      <img :src="leftsrc" alt="">
     </div>
     <div class="pic right">
-      <canvas id="myCanvas" class="myCanvasClass"></canvas>
+       <img :src="rightsrc" alt="">
     </div>
   </div>
 
@@ -146,7 +107,8 @@ const { original, processed } = defineProps(['original', 'processed']);
   margin-right: 10px;
  }
  .pic-list .pic img{
-  width: 200px;
+ width:200px;
+ height:200px;
  }
 .pic-list .btn-group .mybtn {
   display: flex;

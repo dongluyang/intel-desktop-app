@@ -1,6 +1,6 @@
 <template>
   <div>
-  <a-space direction="horizontal" size="large" :style="{width: '100%'}">
+  <a-space class="myspace" direction="horizontal" size="large" :style="{width: '100%'}">
    <a-form  :style="{width:'600px'}" size="large">
          <a-form-item  label="源目录">
            <a-button id='openBtn' @click="openSrcDirectory" type="primary">  {{srcDir}}</a-button>
@@ -26,7 +26,7 @@
     <a-table :columns="columns" :data="files" :style="{width:'600px'}">
 
     <template #action="{ record }">
-      <a-button @click="viewImageWithCompare(record)">view</a-button>
+      <a-button @click="viewImageWithCompare(record)">查看</a-button>
     </template>
 
     </a-table>
@@ -35,9 +35,9 @@
 
   <a-modal v-model:visible="visible" :hide-cancel="true" width="90%">
     <template #title>
-      Title
+      自动抠像比较
     </template>
-      <Image v-if="visible" :original="original" :processed="processed"></Image>
+      <Image v-if="visible" :original="original" :processed="processed" :images="images"></Image>
   </a-modal>
 
 
@@ -81,14 +81,17 @@ export default {
    const visible = ref(false)
    const original = ref('')
    const processed = ref('')
+   const images = ref([])
 
    const viewImageWithCompare = (record)=>{
       original.value = srcDir.value +"\\"+ record.name
       processed.value = distDir.value +"\\"+ record.name.replace(/\.jpg$/, '.png');
-      console.log(original.value)
-       console.log(processed.value)
       visible.value = true
-
+      images.value = []
+      for (let file of files.value) {
+        console.log(file)
+        images.value.push({"src":srcDir.value +"\\"+ file.name,"dest":distDir.value +"\\"+ file.name.replace(/\.jpg$/, '.png')})
+      }
    }
 
 
@@ -134,8 +137,15 @@ export default {
        openFolder,
        viewImageWithCompare,
        original,
-       processed
+       processed,
+       images
     }
   },
 }
 </script>
+
+<style scoped>
+  .myspace{
+    align-items:flex-start;
+  }
+</style>
