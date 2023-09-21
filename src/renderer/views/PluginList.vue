@@ -1,16 +1,21 @@
 <script setup>
   import { ref,onMounted } from "vue";
-  const plugins = [
+  const plugs = ref([
   {title:'Maya2018',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
   {title:'Maya2019',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
   {title:'Nuke',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'}
-  ]
-  onMounted(() => {
+  ])
+  onMounted(async () => {
+    for (let plugin of plugs.value) {
+        const pluginVersion = await window.plugins.get_maya(plugin.title)
+        plugin.installedVersion = pluginVersion
+        console.log(plugin.installedVersion)
+    }
   })
 </script>
 <template>
 <div class="plugin-main" >
-    <a-card v-for="plugin in plugins"  :style="{ width: '380px' , margin:'10px 0'}"   hoverable>
+    <a-card v-for="plugin in plugs"  :style="{ width: '380px' , margin:'10px 0'}"   hoverable>
       <div class="plugin-item">
         <div class="left">
           <a-image
@@ -21,6 +26,7 @@
           <div class="text">
             <div class="title">{{plugin.title}}</div>
             <div class="desc">{{plugin.desc}}</div>
+            <div class="desc">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
           </div>
         </div>
         <div class="down-btn">

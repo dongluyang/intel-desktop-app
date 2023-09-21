@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('intel_configs', {
 
 contextBridge.exposeInMainWorld('plugins', {
   open: (name) => ipcRenderer.invoke('openPlugin',name),
+  get_maya:(maya_version) => ipcRenderer.invoke('getMayaPlugin',maya_version),
 })
 
 

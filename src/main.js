@@ -10,6 +10,7 @@ const Store = require('electron-store');
 const store = new Store();
 const log = require("electron-log")
 import {handleOpenPlugins,handleRembgExec} from './handler/plugin'
+import {getMayaPlugin} from './handler/maya_plugin'
 import {handleRootDocument} from './handler/env'
 import {handleFileWrite,handleFileRead,openFolder,selectDirectory} from './handler/file'
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -80,6 +81,7 @@ app.on('ready', ()=>{
   ipcMain.handle('selectDirectory',selectDirectory)
   ipcMain.handle('doRembgExec',handleRembgExec)
   ipcMain.handle('openFolder',openFolder)
+  ipcMain.handle('getMayaPlugin',getMayaPlugin)
   createWindow()
 });
 
