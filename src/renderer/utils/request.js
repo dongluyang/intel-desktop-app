@@ -12,11 +12,12 @@ const service = axios.create({
   timeout: 100000
 })
 // request拦截器
-service.interceptors.request.use(config => {
+service.interceptors.request.use(async (config) => {
   // 是否需要设置 token
   const isToken = (config.headers || {}).isToken === false
-  if (getToken() && !isToken) {
-    config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+  const token = await getToken() 
+  if (token && !isToken) {
+    config.headers['Authorization'] = 'Bearer ' + token // 让每个请求携带自定义token 请根据实际情况自行修改
   }
   // get请求映射params参数
   if (config.method === 'get' && config.params) {

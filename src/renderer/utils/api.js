@@ -1,6 +1,7 @@
 import axios from 'axios'
 import{getTeamApiUrl} from './global'
-
+import service from './request'
+import { getToken } from './auth'
 export async function getMyAllTasks(userName) {
     const apiUrl = await getTeamApiUrl() + '/getMyAllTasks';
     return new Promise((resolve, reject) => {
@@ -133,4 +134,18 @@ export async function getTaskVersionList(taskId) {
           reject(error);
         });
     });
+  }
+
+
+  export async function listPluginList() {
+    const apiUrl = 'http://cgyun.cn/cgproxy/system/plugin/list';
+    return new Promise((resolve, reject) => {
+    service.get(apiUrl,{})
+    .then((response) => {
+      resolve(response.rows);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+  });
   }

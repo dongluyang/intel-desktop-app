@@ -1,7 +1,12 @@
-const TokenKey = 'Admin-Token'
+const TokenKey = 'user_info'
 
 export async function getToken() {
-  return await window.intel_configs.get(TokenKey)
+  const defaultConfig = await window.intel_configs.get(TokenKey)
+  if (defaultConfig!=null) {
+    const existedUserInfoConfig = JSON.parse(defaultConfig)
+    return  existedUserInfoConfig.accessToken
+  }
+   return null
 }
 
 export function setToken(token) {

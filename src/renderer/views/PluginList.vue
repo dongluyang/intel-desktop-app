@@ -1,16 +1,22 @@
 <script setup>
   import { ref,onMounted } from "vue";
+  import {listPluginList} from '../utils/api.js';
   const plugs = ref([
-  {title:'Maya2018',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
-  {title:'Maya2019',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp'},
-  {title:'Nuke',desc:'CgYun发布',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'}
+
   ])
   onMounted(async () => {
-    for (let plugin of plugs.value) {
-        const pluginVersion = await window.plugins.get_maya(plugin.title)
+
+listPluginList().then(async(response)=>{
+  plugs.value = response
+  console.log(plugs.value)
+  for (let plugin of plugs.value) {
+        const pluginVersion = await window.plugins.get_maya(plugin.name)
         plugin.installedVersion = pluginVersion
         console.log(plugin.installedVersion)
     }
+})
+
+
   })
 </script>
 <template>
@@ -21,15 +27,16 @@
           <a-image
             width="60"
             height="60"
-            :src=plugin.icon
+            :src=plugin.iconUrl
           />
           <div class="text">
-            <div class="title">{{plugin.title}}</div>
-            <div class="desc">{{plugin.desc}}</div>      
+            <div class="title">{{plugin.name}}</div>
+            <div class="desc">{{plugin.createBy}}</div>      
           </div>
         </div>
         <div class="down-btn">
-          <a-button type="outline" shape="round">下载</a-button>
+          <a-button type="outline" shape="round" v-if="plugin.installedVersion=='-1'">下载</a-button>
+          <a-button type="outline" shape="round" v-if="plugin.installedVersion!='-1'" :disabled="plugin.installedVersion!='-1' && plugin.installedVersion=== plugin.v">更新</a-button>
           <div class="state">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
         </div>
       </div>
