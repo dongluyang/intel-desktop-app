@@ -25,12 +25,12 @@
           />
           <div class="text">
             <div class="title">{{plugin.title}}</div>
-            <div class="desc">{{plugin.desc}}</div>
-            <div class="desc">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
+            <div class="desc">{{plugin.desc}}</div>      
           </div>
         </div>
         <div class="down-btn">
           <a-button type="outline" shape="round">下载</a-button>
+          <div class="state">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
         </div>
       </div>
     </a-card>
@@ -62,5 +62,12 @@
     font-size: 18px;
     color: #333;
   } 
+
+  .plugin-main .state{
+    font-size: 12px;
+    color: #666;
+    margin-top: 10px;
+  }
+
 </style>
 
