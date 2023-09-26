@@ -18,6 +18,20 @@ listPluginList().then(async(response)=>{
 
 
   })
+
+
+  function downloadFile(downloadUrl) {
+
+    // 创建下载链接元素
+    var downloadLink = document.getElementById('downloadLink');
+    downloadLink.href = downloadUrl;
+
+    // 设置下载链接的下载属性和文件名
+   // downloadLink.download = 'your-file-name.extension';
+
+    // 模拟点击下载链接
+    downloadLink.click();
+}
 </script>
 <template>
 <div class="plugin-main" >
@@ -35,8 +49,9 @@ listPluginList().then(async(response)=>{
           </div>
         </div>
         <div class="down-btn">
-          <a-button type="outline" shape="round" v-if="plugin.installedVersion=='-1'">下载</a-button>
-          <a-button type="outline" shape="round" v-if="plugin.installedVersion!='-1'" :disabled="plugin.installedVersion!='-1' && plugin.installedVersion=== plugin.v">更新</a-button>
+           <a id="downloadLink" style="display: none;"></a>
+          <a-button type="outline" shape="round" @click="downloadFile(plugin.downloadUrl)" v-if="plugin.installedVersion=='-1'">下载</a-button>
+           <a-button type="outline" shape="round" @click="downloadFile(plugin.downloadUrl)" v-if="plugin.installedVersion!='-1'" :disabled="plugin.installedVersion!='-1' && plugin.installedVersion=== plugin.v">更新</a-button>
           <div class="state">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
         </div>
       </div>

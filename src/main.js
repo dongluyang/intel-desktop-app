@@ -1,4 +1,4 @@
-const { app, BrowserWindow,ipcMain,dialog,shell} = require('electron');
+const { app, BrowserWindow,ipcMain,dialog,shell,Menu} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -20,6 +20,7 @@ if (require('electron-squirrel-startup')) {
 let mainWindow;
 const createWindow = () => {
   // Create the browser window.
+  Menu.setApplicationMenu(null)
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
