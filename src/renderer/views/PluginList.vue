@@ -4,16 +4,19 @@
   const plugs = ref([
 
   ])
+  const emit = defineEmits(['exceptionTrigger'])
   onMounted(async () => {
 
 listPluginList().then(async(response)=>{
   plugs.value = response
-  console.log(plugs.value)
   for (let plugin of plugs.value) {
         const pluginVersion = await window.plugins.get_maya(plugin.name)
         plugin.installedVersion = pluginVersion
         console.log(plugin.installedVersion)
     }
+}).catch(exp=>{
+      // 触发名为 "messageToParent" 的自定义事件，并传递消息数据
+      emit('exceptionTrigger', '401');
 })
 
 
