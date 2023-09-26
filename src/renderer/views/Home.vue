@@ -53,7 +53,7 @@ const updatePassword = (input) => {
 }
 
 
-   const login = ()=>{
+const login = ()=>{
 
       const payload='userName='+userName.value+'&password='+password.value
       const headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
@@ -66,7 +66,9 @@ const updatePassword = (input) => {
   };
 
   const onLogout = ()=>{
-    window.intel_configs.save("user_info",JSON.stringify({"accessToken":'',"userName":''}))
+    window.intel_configs.remove("user_info")
+    window.intel_configs.remove("teams_info")
+    window.intel_configs.remove("current_team_setting")
     window.location.reload()
   };
 
@@ -140,7 +142,7 @@ const updatePassword = (input) => {
       <template #title>
         <icon-clock-circle/> 偏好设置
       </template>
-     <p>{{ $t('welcome') }}</p>
+     <!--<p>{{ $t('welcome') }}</p>-->
     </a-tab-pane>
    </a-tabs>
 

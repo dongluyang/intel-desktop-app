@@ -57,6 +57,12 @@ listPluginList().then(async(response)=>{
            <a-button type="outline" shape="round" @click="downloadFile(plugin.downloadUrl)" v-if="plugin.installedVersion!='-1'" :disabled="plugin.installedVersion!='-1' && plugin.installedVersion=== plugin.v">更新</a-button>
           <div class="state">{{plugin.installedVersion!='-1'?'本地已安装'+plugin.installedVersion:''}}</div>
         </div>
+
+        <!-- 01   添加这一行 -->
+        <div class="new-icon" v-if="plugin.installedVersion=='-1' || plugin.installedVersion!= plugin.v" ><img src="../../../resources/new.png" alt=""></div>
+        <!-- 以上 -->
+
+
       </div>
     </a-card>
   </div>
@@ -68,11 +74,27 @@ listPluginList().then(async(response)=>{
     justify-content: space-between;
   }
   .plugin-item{
+    position: relative;
     min-width: 348px;
     display: flex;
     justify-content: space-between;
+
+    /* 02 添加这个样式 */
     align-items: center;
+    /* 以上 */
+
   }
+  /* 03 添加以上样式 */
+  .plugin-item .new-icon{
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    width: 36px;
+  }
+  .plugin-item .new-icon img{
+    width: 36px;
+  }
+
   .plugin-item .left{
     display: flex;
   }
@@ -87,6 +109,7 @@ listPluginList().then(async(response)=>{
     font-size: 18px;
     color: #333;
   } 
+
 
   .plugin-main .state{
     font-size: 12px;

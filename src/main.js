@@ -74,6 +74,10 @@ app.on('ready', ()=>{
   ipcMain.handle('saveStoreValue', (event, key,value) => {
     store.set(key,value);
   });
+  ipcMain.handle('removeStoreValue', (event, key) => {
+    store.delete(key);
+  });
+  
 
   ipcMain.handle('openPlugin',handleOpenPlugins);
   ipcMain.handle('writeFile',handleFileWrite);

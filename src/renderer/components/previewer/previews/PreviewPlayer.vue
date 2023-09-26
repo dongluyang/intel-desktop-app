@@ -1516,7 +1516,6 @@ export default {
 
     onRevisionPreviewSelected (index) {
       this.currentIndex = index
-      console.log()
     },
 
     onRevisionPreviewDropped ({ previousIndex, newIndex }) {

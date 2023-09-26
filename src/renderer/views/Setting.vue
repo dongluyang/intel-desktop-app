@@ -1,20 +1,4 @@
 <template>
-  <p>账户信息</p>
-  <a-form :model="form" :style="{width:'600px'}" auto-label-width @submit="handleSubmit">
-    <a-form-item field="userName" label="用户名">
-      <a-input v-model="form.userName" disabled />
-    </a-form-item>
-    <a-form-item field="password" label="密码">
-      <a-input-password v-model="form.password" placeholder="请输入密码" />
-    </a-form-item>
-    <a-form-item field="confirm_password" label="再次密码">
-      <a-input-password v-model="form.confirm_password" placeholder="请再次输入密码" />
-    </a-form-item>
-    <a-form-item>
-      <a-button html-type="submit">提交</a-button>
-    </a-form-item>
-  </a-form>
-  <a-divider />
   <p>本地存储</p>
   <a-form :model="storageForm" :style="{width:'600px'}" auto-label-width @submit="handleSubmit">
     <a-form-item field="assetStorage" label="资产地址">

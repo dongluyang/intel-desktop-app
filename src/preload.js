@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('intel_configs', {
   save: (key,value) => ipcRenderer.invoke('saveStoreValue',key,value),
   get: (key) => ipcRenderer.invoke('getStoreValue',key),
+  remove: (key) => ipcRenderer.invoke('removeStoreValue',key),
 })
 
 
