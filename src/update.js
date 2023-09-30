@@ -32,7 +32,7 @@ autoUpdater.on('update-available', ()  => {
     log.info("发现新版本")
 })
 
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) => {
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateUrl) => {
     // dialog.showMessageBox({
     //   title: '下载完成',
     //   message: '最新版本已下载完成, 退出程序进行安装'
@@ -40,13 +40,9 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDa
     //   autoUpdater.quitAndInstall()
     // })
 
-    console.log('Update downloaded');
-    console.log('Release Notes:', releaseNotes);
-    console.log('Release Name:', releaseName);
-    console.log('Release Date:', releaseDate);
-    console.log('Update URL:', updateUrl);
-    console.log('Update Event:', event);
-    console.log('quitAndUpdate:', quitAndUpdate);
+    log.info('Update downloaded');
+    log.info('Release Notes:'+ releaseNotes);
+    log.info('Release Name:'+ releaseName);
     dialog.showMessageBox({
         type: 'info',
         title: '软件更新',
@@ -67,9 +63,9 @@ autoUpdater.on('error', (message) => {
     log.error(message)
 })
   
-// setInterval(() => {
-//     autoUpdater.checkForUpdates()
-// }, 10000)
+setInterval(() => {
+    autoUpdater.checkForUpdates()
+}, 3600000)
 
 
 export default autoUpdater

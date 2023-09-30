@@ -103,3 +103,26 @@ export async function selectDirectory(event) {
   
       return {"dir":selectedDirectory,"files":fileList}
   }
+
+
+
+
+  export async function handlePackageRead (event) {
+
+
+    try {
+      // 同步读取文件内容
+      const data = fs.readFileSync('./package.json', 'utf8');
+      // 解析package.json文件为JavaScript对象
+      const packageJson = JSON.parse(data);
+
+      // 获取版本号
+       const version = packageJson.version;
+      
+       // 输出版本号
+       console.log('应用程序版本号:', version);
+      return version;
+    } catch (err) {
+      console.error('读取文件时出错:', err);
+    }
+  }

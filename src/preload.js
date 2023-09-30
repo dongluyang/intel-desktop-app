@@ -1,12 +1,13 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-const { contextBridge, ipcRenderer } = require('electron')
+const { contextBridge, ipcRenderer,app } = require('electron')
 
 contextBridge.exposeInMainWorld('versions', {
   node: () => process.versions.node,
   chrome: () => process.versions.chrome,
   electron: () => process.versions.electron,
+  appVersion: () => ipcRenderer.invoke('appVersion'),
   ping: (value) => ipcRenderer.send('ping',value),
   // We can expose not only functions, but also variables
 })

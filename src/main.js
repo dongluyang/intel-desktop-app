@@ -3,16 +3,15 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const isDev = require('electron-is-dev');
-// import autoUpdater from './update'
+import autoUpdater from './update'
 const { exec,execSync } = require('child_process');
 const registry = require('winreg');
-const Store = require('electron-store');
-const store = new Store();
 const log = require("electron-log")
 import {handleOpenPlugins,handleRembgExec} from './handler/plugin'
 import {getMayaPlugin} from './handler/maya_plugin'
 import {handleRootDocument} from './handler/env'
-import {handleFileWrite,handleFileRead,openFolder,selectDirectory} from './handler/file'
+import {handleFileWrite,handleFileRead,openFolder,selectDirectory,handlePackageRead} from './handler/file'
+import {getStoreValue,saveStoreValue,removeStoreValue} from './handler/store'
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -24,6 +23,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: './images/icon.ico',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,    // 禁用 Web 安全性限制
@@ -39,7 +39,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   // autoUpdater.on('download-progress', res => {
   //   mainWindow.webContents.send('downloadProgress', res)
@@ -48,8 +48,8 @@ const createWindow = () => {
   mainWindow.once('ready-to-show', () => {
 
     // autoUpdater.autoDownload = false
-    //
-    // autoUpdater.checkForUpdates()
+   
+    autoUpdater.checkForUpdates()
 
   });
 
@@ -68,17 +68,9 @@ async function handlePing (event, keyword) {
 // Some APIs can only be used after this event occurs.
 app.on('ready', ()=>{
   ipcMain.on('ping', handlePing)
-  ipcMain.handle('getStoreValue', (event, key) => {
-    return store.get(key);
-  });
-  ipcMain.handle('saveStoreValue', (event, key,value) => {
-    store.set(key,value);
-  });
-  ipcMain.handle('removeStoreValue', (event, key) => {
-    store.delete(key);
-  });
-  
-
+  ipcMain.handle('getStoreValue',getStoreValue);
+  ipcMain.handle('saveStoreValue', saveStoreValue);
+  ipcMain.handle('removeStoreValue', removeStoreValue);
   ipcMain.handle('openPlugin',handleOpenPlugins);
   ipcMain.handle('writeFile',handleFileWrite);
   ipcMain.handle('readFile',handleFileRead);
@@ -87,6 +79,7 @@ app.on('ready', ()=>{
   ipcMain.handle('doRembgExec',handleRembgExec)
   ipcMain.handle('openFolder',openFolder)
   ipcMain.handle('getMayaPlugin',getMayaPlugin)
+  ipcMain.handle('appVersion',handlePackageRead)
   createWindow()
 });
 

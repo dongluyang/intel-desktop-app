@@ -29,6 +29,8 @@
       userName.value = existedUserInfoConfig.userName
     }
     router.replace({path:'/pending_tasks'});
+    appVersion.value = await window.versions.appVersion()
+    console.log(appVersion.value)
   })
 
   const showLogin = ref(false);
@@ -37,7 +39,7 @@
   const accessToken = ref('');
   const password = ref('');
   const teamList = ref([]);
-
+  const appVersion = ref('');
   const form = reactive({
         groupId:""
     })
@@ -142,7 +144,6 @@ const login = ()=>{
       <template #title>
         <icon-clock-circle/> 偏好设置
       </template>
-     <!--<p>{{ $t('welcome') }}</p>-->
     </a-tab-pane>
    </a-tabs>
 
@@ -178,12 +179,21 @@ const login = ()=>{
      </a-form>
    </a-modal>
 
+   <div class="centered-text">{{ $t('version')}}{{appVersion}}</div>
 
 
  </div>
 </template>
 
 <style scoped>
+ /* 使用 CSS 来设置文本样式和居中 */
+.centered-text {
+      text-align: center; /* 文本水平居中 */
+      font-weight: bold;  /* 加粗文本 */
+      position: absolute; /* 使用绝对定位 */
+      bottom: 0;          /* 放置在底部 */
+      width: 100%;        /* 宽度占满整个宽度 */
+}
 /* 使用 Flexbox 布局将按钮和 a-tabs 放在同一行并右对齐 */
 .tab-container {
   display: flex;

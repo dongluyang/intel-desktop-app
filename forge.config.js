@@ -1,10 +1,18 @@
 module.exports = {
-  packagerConfig: {"extraResources": "./resources/rembg.exe"},
+  packagerConfig: {
+    "extraResources": "./resources/rembg.exe",
+    "icon": './src/images/icon'
+  },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+          // An URL to an ICO file to use as the application icon (displayed in Control Panel > Programs and Features).
+          iconUrl: 'https://url/to/icon.ico',
+          // The ICO file to use as the icon for the generated Setup.exe
+          setupIcon: './src/images/icon.ico'
+      },
     },
     {
       name: '@electron-forge/maker-zip',
@@ -29,7 +37,7 @@ module.exports = {
           owner: 'dongluyang',
           name: 'intel-desktop-app'
         },
-        authToken:'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',
+        authToken:'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',
         prerelease: true
       }
     }

@@ -21,10 +21,12 @@ const i18n = createI18n({
     en: {
       hello: 'Hello',
       welcome: 'Welcome to our app!',
+      version:'The Current Cgyun Client version:'
     },
     zh: {
       hello: '你好',
       welcome: '欢迎来到我们的应用！',
+      version:'当前Cgyun客户端版本:'
     },
   },
 });

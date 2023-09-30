@@ -5,12 +5,10 @@
     <a-layout-sider>
       <div class="menu-demo">
         <a-menu
-            :style="{ width: '200px', height: '100%' }"
+            :style="{ width: '199px', height: '100%' }"
             :default-open-keys="['0']"
             :default-selected-keys="['0_2']"
             show-collapse-button
-            breakpoint="xl"
-            default-collapsed="false"
             @collapse="onCollapse"
         >
           <a-menu-item key="0">
@@ -317,3 +315,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.menu-demo {
+  box-sizing: border-box;
+  width: 100%;
+  height: 800px;
+  padding: 1px;
+  background-color: var(--color-neutral-2);
+}
+</style>
