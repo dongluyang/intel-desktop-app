@@ -4,15 +4,15 @@ const fs = require('fs');
 const os = require('os');
 const isDev = require('electron-is-dev');
 import autoUpdater from './update'
-const { exec,execSync } = require('child_process');
 const registry = require('winreg');
 const log = require("electron-log")
 import {handleOpenPlugins,handleRembgExec} from './handler/plugin'
+import {handleRcloneMount} from './handler/rclone'
 import {getMayaPlugin} from './handler/maya_plugin'
 import {handleRootDocument} from './handler/env'
 import {handleFileWrite,handleFileRead,openFolder,selectDirectory,handlePackageRead} from './handler/file'
 import {getStoreValue,saveStoreValue,removeStoreValue} from './handler/store'
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// Handle creating/removing shortcuts on Windows when installing/uninstalling. https://github.com/ncdev2015/LoadObjFiles-Threejs-Vue2
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -39,7 +39,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // autoUpdater.on('download-progress', res => {
   //   mainWindow.webContents.send('downloadProgress', res)
@@ -80,6 +80,8 @@ app.on('ready', ()=>{
   ipcMain.handle('openFolder',openFolder)
   ipcMain.handle('getMayaPlugin',getMayaPlugin)
   ipcMain.handle('appVersion',handlePackageRead)
+  ipcMain.on('doRcloneMount',handleRcloneMount)
+  
   createWindow()
 });
 

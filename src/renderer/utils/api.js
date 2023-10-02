@@ -1,7 +1,6 @@
 import axios from 'axios'
 import{getTeamApiUrl} from './global'
 import service from './request'
-import { getToken } from './auth'
 export async function getMyAllTasks(userName) {
     const apiUrl = await getTeamApiUrl() + '/getMyAllTasks';
     return new Promise((resolve, reject) => {

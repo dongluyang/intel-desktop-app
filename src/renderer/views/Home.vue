@@ -100,6 +100,7 @@ const login = ()=>{
       const team = teamList.value.find(obj => obj.id === form.groupId);
       window.intel_configs.save("current_team_setting",JSON.stringify(team))
       done(true)
+      window.rclone.mount_to_local({},'cgteamxcm')
     } else {
       done(false)
     }
