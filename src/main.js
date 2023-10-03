@@ -1,4 +1,4 @@
-const { app, BrowserWindow,ipcMain,dialog,shell,Menu} = require('electron');
+const { app, BrowserWindow,ipcMain,dialog,shell,Menu,Tray} = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -17,6 +17,7 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 let mainWindow;
+let tray;
 const createWindow = () => {
   // Create the browser window.
   Menu.setApplicationMenu(null)
@@ -39,7 +40,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // autoUpdater.on('download-progress', res => {
   //   mainWindow.webContents.send('downloadProgress', res)
@@ -53,6 +54,14 @@ const createWindow = () => {
 
   });
 
+
+
+mainWindow.on('close', (event) => {
+    // 阻止窗口默认的关闭行为
+    event.preventDefault();
+    mainWindow.hide(); // 最小化窗口
+  });
+
 };
 
 
@@ -62,6 +71,11 @@ async function handlePing (event, keyword) {
   win.setTitle(keyword)
 }
 
+function showWindow() {
+  if (!mainWindow.isVisible()) {
+    mainWindow.show();
+  }
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -83,6 +97,31 @@ app.on('ready', ()=>{
   ipcMain.on('doRcloneMount',handleRcloneMount)
   
   createWindow()
+
+  // 创建系统托盘图标
+  try {
+    tray = new Tray(path.join(__dirname, '../../src/images/icon.ico'));
+  } catch (error) {
+    console.error('出错了：', error);
+  }
+
+  // 可以添加一个上下文菜单，以便用户右键单击图标时显示菜单
+  if (process.platform === 'win32') {
+       tray.on('click', showWindow);
+  }
+    
+  const menu = Menu.buildFromTemplate([
+        { label: '打开主页面', click: showWindow },
+        {
+          label: '退出',
+          click() {mainWindow.destroy();app.quit();}
+        }
+  ]);
+    
+tray.setToolTip('Cgyun客户端');
+tray.setContextMenu(menu);
+
+
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
