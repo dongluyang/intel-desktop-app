@@ -2,6 +2,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const {spawn } = require('child_process');
 const log = require("electron-log")
+import {saveStoreValue} from './store.js'
   
 export  async function handleRcloneMount (event,projects,teamName) {
   
@@ -25,9 +26,10 @@ export  async function handleRcloneMount (event,projects,teamName) {
             stdio: 'ignore' // 忽略标准输入/输出，将其置为 'ignore' 或 'inherit'
       });
         
+      saveStoreValue(null,"rclone_pid",childProcess.pid)
       // 子进程已经独立出来，你可以选择是否将其设置为一个新的会话
       childProcess.unref();
-
+      
     } catch (error) {
       console.error(`执行命令时发生错误： ${error.message}`);
     }

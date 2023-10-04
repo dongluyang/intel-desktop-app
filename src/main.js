@@ -77,6 +77,16 @@ function showWindow() {
   }
 }
 
+function quitApp() {
+  const childPID = getStoreValue(null,"rclone_pid")
+  if (childPID!=null) {
+    process.kill(childPID);
+  }
+  mainWindow.destroy();
+  app.quit();
+}
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -112,10 +122,7 @@ app.on('ready', ()=>{
     
   const menu = Menu.buildFromTemplate([
         { label: '打开主页面', click: showWindow },
-        {
-          label: '退出',
-          click() {mainWindow.destroy();app.quit();}
-        }
+        {label: '退出',click:quitApp}
   ]);
     
 tray.setToolTip('Cgyun客户端');
