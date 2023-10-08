@@ -148,3 +148,17 @@ export async function getTaskVersionList(taskId) {
     });
   });
   }
+
+
+  export async function listSyncOfProjects(containerId) {
+    const apiUrl = 'http://cgyun.cn/cgproxy/system/group/getSyncOfProjects?container_id='+containerId;
+    return new Promise((resolve, reject) => {
+    service.post(apiUrl,{})
+    .then((response) => {
+      resolve(response.data);
+    })
+    .catch((error) => {
+      reject(error);
+    });
+  });
+  }

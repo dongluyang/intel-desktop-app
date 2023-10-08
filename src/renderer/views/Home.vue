@@ -3,6 +3,8 @@
   import { ref,onMounted,reactive } from "vue";
   import Login from './Login.vue'
   import request from '../utils/request'
+  import {listSyncOfProjects} from '../utils/api'
+
   const router = useRouter();
   const route = useRoute();
   const clickTasks = () => {
@@ -100,7 +102,11 @@ const login = ()=>{
       const team = teamList.value.find(obj => obj.id === form.groupId);
       window.intel_configs.save("current_team_setting",JSON.stringify(team))
       done(true)
-      window.rclone.mount_to_local({},'cgteamxcm')
+      listSyncOfProjects(form.groupId).then(ret=>{
+        let storageDir = ret.storagePath
+        let subprojects = ret.subprojectList
+        window.rclone.mount_to_local(subprojects,storageDir)
+      }) 
     } else {
       done(false)
     }
