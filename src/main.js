@@ -40,7 +40,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // autoUpdater.on('download-progress', res => {
   //   mainWindow.webContents.send('downloadProgress', res)
@@ -84,9 +84,14 @@ function quitApp() {
     const pids = JSON.parse(childPIDs)
     console.log(pids)
     for (let pid of pids) {
-      process.kill(pid);
+      try {
+        process.kill(pid);
+      }catch (error) {
+        console.log(error)
+      }
     }
   }
+  removeStoreValue(null,"rclone_pid")
   mainWindow.destroy();
   app.quit();
 }

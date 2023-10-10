@@ -105,7 +105,7 @@ const login = ()=>{
       listSyncOfProjects(form.groupId).then(ret=>{
         let storageDir = ret.storagePath
         let subprojects = ret.subprojectList
-        window.rclone.mount_to_local(subprojects,storageDir)
+        window.rclone.mount_to_local(subprojects,storageDir+team.groupName+"/")
       }) 
     } else {
       done(false)

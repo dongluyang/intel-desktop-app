@@ -20,7 +20,12 @@ export  async function handleRcloneMount (event,projects,storageDir) {
 
     const documentPath = await handleRootDocument()
     console.log(storageDir)
-    console.log(documentPath)
+
+      // 使用 fs.existsSync() 检查目录是否存在
+    if (!fs.existsSync(storageDir)) {
+        fs.mkdirSync(storageDir, { recursive: true });
+    } 
+
     // 生成文件内容
     let fileContent = '';
 
