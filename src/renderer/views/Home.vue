@@ -166,14 +166,14 @@ const login = ()=>{
    <div style="padding: 10px;"><router-view @exceptionTrigger="handleException" /></div>
 
    <a-button v-if="accessToken==''"  type="primary" class="floating-button larger-button" size="medium" @click="openDialog">登录</a-button>
-   <a-modal v-model:visible="showLogin" :on-before-ok="handleOk" @cancel="handleCancel">
+   <a-modal width="100%" v-model:visible="showLogin" :on-before-ok="handleOk" @cancel="handleCancel">
      <template #title>
        登录系统
      </template>
      <Login @updateUserName="updateUserName"  @updatePassword="updatePassword"></Login>
    </a-modal>
 
-   <a-modal v-model:visible="showTeamSelect" :on-before-ok="handleTeamSelectOk" @cancel="handleTeamSelectCancel">
+   <a-modal width="100%"  v-model:visible="showTeamSelect" :on-before-ok="handleTeamSelectOk" @cancel="handleTeamSelectCancel">
      <template #title>
        选择团队
      </template>
