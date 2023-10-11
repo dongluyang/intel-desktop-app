@@ -26,6 +26,7 @@ export  async function handleRcloneMount (event,projects,storageDir) {
         fs.mkdirSync(storageDir, { recursive: true });
     } 
 
+
     // 生成文件内容
     let fileContent = '';
 
@@ -40,9 +41,10 @@ export  async function handleRcloneMount (event,projects,storageDir) {
         fileContent +=  ("region = "+parts[1]+"\n")
         fileContent +=  ("endpoint = "+parsedData.region+"\n")
         fileContent +=  "acl = private\n"
-        fs.writeFileSync(documentPath+"\\CGTeam"+'\\obs.txt', fileContent);
-        fileContent = '';
     }
+
+    fs.writeFileSync(documentPath+"\\CGTeam"+'\\obs.txt', fileContent);
+
     const pids = []
     for (let project of projects) {
         // const command = 'rembg';
