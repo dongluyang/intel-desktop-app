@@ -3,7 +3,7 @@ const isDev = require('electron-is-dev');
 const {spawn } = require('child_process');
 const log = require("electron-log")
 const fs = require('fs');
-import {saveStoreValue} from './store.js'
+import {saveStoreValue,removeStoreValue,getStoreValue} from './store.js'
 import {handleRootDocument} from './env.js'
   
 export  async function handleRcloneMount (event,projects,storageDir) {
@@ -71,3 +71,19 @@ export  async function handleRcloneMount (event,projects,storageDir) {
     saveStoreValue(null,"rclone_pid",JSON.stringify(pids))
 
   }
+
+export async function quitAllRclone(event) {
+  const childPIDs = getStoreValue(event,"rclone_pid")
+  console.log(childPIDs)
+  if (childPIDs!=null) {
+    const pids = JSON.parse(childPIDs)
+    for (let pid of pids) {
+      try {
+        process.kill(pid);
+      }catch (error) {
+        console.log(error)
+      }
+    }
+  }
+  removeStoreValue(event,"rclone_pid")
+}  
