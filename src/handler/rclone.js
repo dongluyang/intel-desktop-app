@@ -48,7 +48,7 @@ export  async function handleRcloneMount (event,projects,storageDir) {
     const pids = []
     for (let project of projects) {
         // const command = 'rembg';
-        const args = ['--config='+documentPath+"\\CGTeam"+'\\obs.txt','mount',project.mainProjectName+':'+project.mainProjectName+"/"+project.subprojectName,storageDir+project.mainProjectName,'--vfs-cache-mode','full'];
+        const args = ['--config='+documentPath+"\\CGTeam"+'\\obs.txt','mount',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName,storageDir+project.mainProjectName,'--vfs-cache-mode','full'];
 
 
         try {

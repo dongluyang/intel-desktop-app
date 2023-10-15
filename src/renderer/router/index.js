@@ -6,7 +6,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue'
 import TaskList from "../views/TaskList.vue"
 import PluginList from "../views/PluginList.vue"
-import ScriptList from "../views/ScriptList.vue"
+import AppList from "../views/AppList.vue"
 import Setting from "../views/Setting.vue"
 import Rembg from "../apps/Rembg.vue"
 const About = { template: '<div>About</div>' }
@@ -26,7 +26,7 @@ const routes = [
             },
             {
                 path: '/scripts',
-                component: ScriptList, // 子路由组件
+                component: AppList, // 子路由组件
             },
             {
                 path: '/setting',

@@ -3,7 +3,8 @@ import { useRouter, useRoute } from 'vue-router';
 import { ref,reactive } from "vue";
 const keyword = ref('')
 const scripts = [
-  {title:'Rembg抠像',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp'},
+  {title:'Rembg抠像',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/rembg'},
+  {title:'资产数据同步',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/asset_sync'},
   ]
 const router = useRouter();
 
@@ -11,8 +12,8 @@ const searchByClick = () => {
    window.versions.ping(keyword.value)
 }
 
-const doClick = () => {
-  router.replace({path:'/rembg'});
+const doClick = (path) => {
+  router.replace({path:path});
 }
 
 </script>
@@ -40,7 +41,7 @@ const doClick = () => {
         <div class="right">
           <div class="time">{{scriptItem.time}}</div>
           <div class="down-btn">
-            <a-button type="outline" shape="round" @click="doClick">打开</a-button>
+            <a-button type="outline" shape="round" @click="doClick(scriptItem.path)">打开</a-button>
           </div>
         </div>
       </div>

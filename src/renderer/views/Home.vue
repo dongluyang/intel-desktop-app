@@ -101,12 +101,12 @@ const login = ()=>{
     if (form.groupId!='') {
       const team = teamList.value.find(obj => obj.id === form.groupId);
       window.intel_configs.save("current_team_setting",JSON.stringify(team))
-      done(true)
       listSyncOfProjects(form.groupId).then(ret=>{
         let storageDir = ret.storagePath
         let subprojects = ret.subprojectList
         window.rclone.mount_to_local(subprojects,storageDir+team.groupName+"/")
-      }) 
+      })
+      done(true) 
     } else {
       done(false)
     }
