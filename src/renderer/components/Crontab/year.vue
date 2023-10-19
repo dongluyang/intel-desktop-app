@@ -32,8 +32,8 @@
         <a-form-item>
             <a-radio :value="5" v-model='radioValue'>
                 指定
-                <a-select clearable v-model="checkboxList" placeholder="可多选" multiple :multiple-limit="8">
-                    <a-option v-for="item in 9" :key="item" :value="item - 1 + fullYear" :label="item -1 + fullYear" />
+                <a-select allow-clear v-model="checkboxList" placeholder="可多选" multiple>
+                    <a-option v-for="item in 9" :index="item" :value="item - 1 + fullYear"  >{{item -1 + fullYear}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>
@@ -97,9 +97,9 @@ function changeRadioValue(value) {
         cycle02.value = Number(indexArr[1])
         radioValue.value = 3
     } else if (value.indexOf("/") > -1) {
-        const indexArr = value.split('#')
-        average01.value = Number(indexArr[1])
-        average02.value = Number(indexArr[0])
+        const indexArr = value.split('/')
+        average01.value = Number(indexArr[0])
+        average02.value = Number(indexArr[1])
         radioValue.value = 4
     } else {
         checkboxList.value = [...new Set(value.split(',').map(item => Number(item)))]

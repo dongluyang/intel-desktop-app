@@ -1,25 +1,24 @@
 <template>
     <a-form size='small'>
         <a-form-item>
-            <a-radio v-model='radioValue' :label="1">
+            <a-radio v-model='radioValue' :value="1">
                 周，允许的通配符[, - * ? / L #]
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="2">
+            <a-radio v-model='radioValue' :value="2">
                 不指定
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="3">
+            <a-radio v-model='radioValue' :value="3">
                 周期从
                 <a-select clearable v-model="cycle01">
                     <a-option
                         v-for="(item,index) of weekList"
-                        :key="index"
-                        :label="item.value"
+                        :index="index"
                         :value="item.key"
                         :disabled="item.key === 7"
                     >{{item.value}}</a-option>
@@ -28,8 +27,7 @@
                 <a-select clearable v-model="cycle02">
                     <a-option
                         v-for="(item,index) of weekList"
-                        :key="index"
-                        :label="item.value"
+                        :index="index"
                         :value="item.key"
                         :disabled="item.key <= cycle01"
                     >{{item.value}}</a-option>
@@ -38,29 +36,29 @@
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="4">
+            <a-radio v-model='radioValue' :value="4">
                 第
                 <a-input-number v-model='average01' :min="1" :max="4" /> 周的
-                <a-select clearable v-model="average02">
-                    <a-option v-for="item in weekList" :key="item.key" :label="item.value" :value="item.key" />
+                <a-select allow-clear v-model="average02">
+                    <a-option v-for="item in weekList" :index="item.key"  :value="item.key" >{{item.value}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="5">
+            <a-radio v-model='radioValue' :value="5">
                 本月最后一个
-                <a-select clearable v-model="weekday">
-                    <a-option v-for="item in weekList" :key="item.key" :label="item.value" :value="item.key" />
+                <a-select allow-clear v-model="weekday">
+                    <a-option v-for="item in weekList" :index="item.key" :value="item.key">{{item.value}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="6">
+            <a-radio v-model='radioValue' :value="6">
                 指定
-                <a-select class="multiselect" clearable v-model="checkboxList" placeholder="可多选" multiple :multiple-limit="6">
-                    <a-option v-for="item in weekList" :key="item.key" :label="item.value" :value="item.key" />
+                <a-select class="multiselect" allow-clear v-model="checkboxList" placeholder="可多选" multiple>
+                    <a-option v-for="item in weekList" :index="item.key" :value="item.key">{{item.value}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>

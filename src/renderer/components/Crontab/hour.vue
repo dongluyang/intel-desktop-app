@@ -1,13 +1,13 @@
 <template>
     <a-form size="small">
         <a-form-item>
-            <a-radio v-model='radioValue' :label="1">
+            <a-radio v-model='radioValue' :value="1">
                 小时，允许的通配符[, - * /]
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="2">
+            <a-radio v-model='radioValue' :value="2">
                 周期从
                 <a-input-number v-model='cycle01' :min="0" :max="22" /> -
                 <a-input-number v-model='cycle02' :min="cycle01 + 1" :max="23" /> 时
@@ -15,7 +15,7 @@
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="3">
+            <a-radio v-model='radioValue' :value="3">
                 从
                 <a-input-number v-model='average01' :min="0" :max="22" /> 时开始，每
                 <a-input-number v-model='average02' :min="1" :max="23 - average01" /> 小时执行一次
@@ -23,10 +23,10 @@
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="4">
+            <a-radio v-model='radioValue' :value="4">
                 指定
-                <a-select clearable v-model="checkboxList" placeholder="可多选" multiple :multiple-limit="10">
-                    <a-option v-for="item in 24" :key="item" :label="item - 1" :value="item - 1" />
+                <a-select allow-clear v-model="checkboxList" placeholder="可多选" multiple>
+                    <a-option v-for="item in 24" :index="item" :value="item - 1">{{item - 1}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>

@@ -1,13 +1,13 @@
 <template>
     <a-form size='small'>
         <a-form-item>
-            <a-radio v-model='radioValue' :label="1">
+            <a-radio v-model='radioValue' :value="1">
                 月，允许的通配符[, - * /]
             </a-radio>
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="2">
+            <a-radio v-model='radioValue' :value="2">
                 周期从
                 <a-input-number v-model='cycle01' :min="1" :max="11" /> -
                 <a-input-number v-model='cycle02' :min="cycle01 + 1" :max="12" /> 月
@@ -15,7 +15,7 @@
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="3">
+            <a-radio v-model='radioValue' :value="3">
                 从
                 <a-input-number v-model='average01' :min="1" :max="11" /> 月开始，每
                 <a-input-number v-model='average02' :min="1" :max="12 - average01" /> 月月执行一次
@@ -23,10 +23,10 @@
         </a-form-item>
 
         <a-form-item>
-            <a-radio v-model='radioValue' :label="4">
+            <a-radio v-model='radioValue' :value="4">
                 指定
-                <a-select clearable v-model="checkboxList" placeholder="可多选" multiple :multiple-limit="8">
-                    <a-option v-for="item in monthList" :key="item.key" :label="item.value" :value="item.key" />
+                <a-select allow-clear v-model="checkboxList" placeholder="可多选" multiple>
+                    <a-option v-for="item in monthList" :index="item.key" :value="item.key">{{item.value}}</a-option>
                 </a-select>
             </a-radio>
         </a-form-item>
