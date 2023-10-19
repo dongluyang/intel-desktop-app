@@ -26,7 +26,6 @@
       <crontab @hide="openCron=false" @fill="crontabFill" :expression="expression"></crontab>
 
       <template #footer>
-      1
     </template>
     </a-modal>
 
