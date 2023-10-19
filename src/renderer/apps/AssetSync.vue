@@ -6,7 +6,6 @@
         <a-button
           type="primary"
           plain
-          size="mini"
           @click = "openCron=true"
         >新增</a-button>
       </a-col>
@@ -15,17 +14,20 @@
           type="success"
           plain
           icon="el-icon-edit"
-          size="mini"
         >修改</a-button>
       </a-col>
     </a-row>
 
 
-    <a-modal  v-model:visible="openCron" width="100%">
+    <a-modal  v-model:visible="openCron" width="100%" :footer="footer" >
      <template #title>
       Cron表达式生成器
     </template>
       <crontab @hide="openCron=false" @fill="crontabFill" :expression="expression"></crontab>
+
+      <template #footer>
+      1
+    </template>
     </a-modal>
 
 
@@ -45,17 +47,19 @@ export default {
 
 
    const openCron = ref(false) 
+   const footer = ref(false) 
    const expression = ref('')
 
     /** 确定后回传值 */
     const crontabFill = (value)=> {
-      
+      console.log(value)
     }
 
     return {
        openCron, 
        expression,
        crontabFill,
+       footer
     }
   },
 }
