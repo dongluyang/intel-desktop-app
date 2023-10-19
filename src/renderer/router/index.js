@@ -9,6 +9,7 @@ import PluginList from "../views/PluginList.vue"
 import AppList from "../views/AppList.vue"
 import Setting from "../views/Setting.vue"
 import Rembg from "../apps/Rembg.vue"
+import AssetSync from "../apps/AssetSync.vue"
 const About = { template: '<div>About</div>' }
 
 const routes = [
@@ -35,6 +36,10 @@ const routes = [
             {
                 path: '/rembg',
                 component: Rembg, // 子路由组件
+            },
+            {
+                path: '/asset_sync',
+                component: AssetSync, // 子路由组件
             }
         ]
     },
