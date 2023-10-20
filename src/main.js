@@ -7,7 +7,7 @@ import autoUpdater from './update'
 const registry = require('winreg');
 const log = require("electron-log")
 import {handleOpenPlugins,handleRembgExec} from './handler/plugin'
-import {handleRcloneMount,quitAllRclone} from './handler/rclone'
+import {handleRcloneMount,quitAllRclone,launchCronJob} from './handler/rclone'
 import {getMayaPlugin} from './handler/maya_plugin'
 import {handleRootDocument} from './handler/env'
 import {handleFileWrite,handleFileRead,openFolder,selectDirectory,handlePackageRead} from './handler/file'
@@ -116,6 +116,7 @@ app.on('ready', ()=>{
   ipcMain.handle('appVersion',handlePackageRead)
   ipcMain.on('doRcloneMount',handleRcloneMount)
   ipcMain.handle('quitApp',quitAllRclone)
+  ipcMain.on('doLaunchCronJob',launchCronJob)
   
   createWindow()
 

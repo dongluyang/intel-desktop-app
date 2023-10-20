@@ -44,5 +44,5 @@ contextBridge.exposeInMainWorld('rembg', {
 contextBridge.exposeInMainWorld('rclone', {
   mount_to_local: (projects,teamName) => ipcRenderer.send('doRcloneMount',projects,teamName),
   quit_app: () => ipcRenderer.invoke('quitApp'),
-  
+  launch_cron_job: (cronExpression,projects,storageDir) => ipcRenderer.send('doLaunchCronJob',cronExpression,projects,storageDir)
 })

@@ -1,8 +1,9 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
-const {spawn } = require('child_process');
+const {spawn,exec } = require('child_process');
 const log = require("electron-log")
 const fs = require('fs');
+const cron = require('node-cron');
 import {saveStoreValue,removeStoreValue,getStoreValue} from './store.js'
 import {handleRootDocument} from './env.js'
   
@@ -86,4 +87,52 @@ export async function quitAllRclone(event) {
     }
   }
   removeStoreValue(event,"rclone_pid")
+}  
+
+
+export async function launchCronJob(event,cronExpression,projects,storageDir) {
+
+
+
+    // 要执行的命令和参数
+    let command;
+    if (isDev) {
+      // 在开发模式下，`rembg.exe` 可能在项目根目录下或其他位置
+      command = path.join(__dirname, '../../resources', 'rclone.exe');
+    } else {
+      // 在生产模式下，`rembg.exe` 位于安装包的 `resources` 文件夹下
+      command = path.join(process.resourcesPath, 'app','resources', 'rclone.exe');
+    }
+
+    const documentPath = await handleRootDocument()
+
+    // 使用 fs.existsSync() 检查目录是否存在
+     if (!fs.existsSync(storageDir)) {
+            fs.mkdirSync(storageDir, { recursive: true });
+     } 
+
+  console.log(cronExpression)
+  // 使用node-cron来创建Cron作业
+  cron.schedule(cronExpression, () => {
+    // 这里的Cron表达式是 '* * * * *'，表示每分钟执行一次
+    // 在这里执行您想要的命令或进程
+    for (let project of projects) {
+      const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName,storageDir+project.mainProjectName];
+
+      console.log(args.join(' '))
+      exec(args.join(' '), (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+          return;
+        }
+        console.log(`stdout: ${stdout}`);
+      });
+  }
+  });
+
+
 }  

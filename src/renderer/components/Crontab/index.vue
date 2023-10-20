@@ -152,7 +152,7 @@ const crontabValueObj = ref({
     hour: "*",
     day: "*",
     month: "*",
-    week: "?",
+    week: "*",
     year: "",
 })
 const crontabValueString = computed(() => {

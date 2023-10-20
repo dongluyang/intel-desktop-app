@@ -45,7 +45,7 @@ const props = defineProps({
             hour: "*",
             day: "*",
             month: "*",
-            week: "?",
+            week: "*",
             year: "",
         }
     },
