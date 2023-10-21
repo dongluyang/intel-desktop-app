@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+   <a-alert style="margin:10px">配置数据同步调度任务</a-alert>
 
     <a-row class="mb8">
       <a-col :span="2">
@@ -18,12 +19,13 @@
       </a-col>
     </a-row>
 
+    <CrontabResult v-if="crontabValueString!=''" :ex="crontabValueString"></CrontabResult>
 
     <a-modal  v-model:visible="openCron" width="100%" :footer="footer" >
      <template #title>
       Cron表达式生成器
     </template>
-      <crontab @hide="openCron=false" @fill="crontabFill" :expression="expression"></crontab>
+      <crontab @hide="openCron=false" @fill="crontabFill" :expression="crontabValueString"></crontab>
 
       <template #footer>
     </template>
@@ -35,22 +37,29 @@
 
 <script>
 import Crontab from '../components/Crontab/index.vue'
+import CrontabResult from '../components/Crontab/result.vue'
 import {listSyncOfProjects} from '../utils/api'
 import { reactive,ref,onMounted } from 'vue';
 export default {
     //组件的注册
   components: {
-    Crontab
+    Crontab,
+    CrontabResult
   },
   setup() {
 
 
    const openCron = ref(false) 
    const footer = ref(false) 
-   const expression = ref('')
+   const crontabValueString = ref('')
+
+   onMounted(async () => {
+    crontabValueString.value = await window.intel_configs.get("cron_expression")
+})
 
     /** 确定后回传值 */
     const crontabFill = async (cronExpression)=> {
+      crontabValueString.value = cronExpression
       const teamConfig = await window.intel_configs.get("current_team_setting")
       if (teamConfig!=null) {
         const team = JSON.parse(teamConfig)
@@ -65,7 +74,7 @@ export default {
 
     return {
        openCron, 
-       expression,
+       crontabValueString,
        crontabFill,
        footer
     }

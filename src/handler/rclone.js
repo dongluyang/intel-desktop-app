@@ -92,8 +92,8 @@ export async function quitAllRclone(event) {
 
 export async function launchCronJob(event,cronExpression,projects,storageDir) {
 
-
-
+    saveStoreValue(event,"cron_expression",cronExpression)
+   
     // 要执行的命令和参数
     let command;
     if (isDev) {
@@ -111,7 +111,25 @@ export async function launchCronJob(event,cronExpression,projects,storageDir) {
             fs.mkdirSync(storageDir, { recursive: true });
      } 
 
-  console.log(cronExpression)
+    // 生成文件内容
+    let fileContent = '';
+
+    for (let project of projects) {
+        const parsedData = JSON.parse(project.storageOption);
+        const parts = parsedData.region.split('.')
+        fileContent += "["+project.mainProjectName+"]\n"
+        fileContent +=  "type = s3\n"
+        fileContent +=  "provider = HuaweiOBS\n"
+        fileContent +=  ("access_key_id = "+parsedData.accessKey+"\n")
+        fileContent +=  ("secret_access_key = "+parsedData.secretKey+"\n")
+        fileContent +=  ("region = "+parts[1]+"\n")
+        fileContent +=  ("endpoint = "+parsedData.region+"\n")
+        fileContent +=  "acl = private\n"
+    }
+
+    fs.writeFileSync(documentPath+"\\CGTeam"+'\\obs.txt', fileContent);
+
+
   // 使用node-cron来创建Cron作业
   cron.schedule(cronExpression, () => {
     // 这里的Cron表达式是 '* * * * *'，表示每分钟执行一次

@@ -54,13 +54,6 @@ export default {
     if (teamForm.groupId!='') {
       const team = teamForm.teams.find(obj => obj.id === teamForm.groupId);
       window.intel_configs.save("current_team_setting",JSON.stringify(team))
-      await window.rclone.quit_app()
-      listSyncOfProjects(teamForm.groupId).then(ret=>{
-        let storageDir = ret.storagePath
-        let subprojects = ret.subprojectList
-        window.rclone.mount_to_local(subprojects,storageDir+team.groupName+"/")
-      })
-
     }
   };
 
