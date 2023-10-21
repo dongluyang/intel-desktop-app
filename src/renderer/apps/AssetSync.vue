@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-   <a-alert style="margin:10px">配置数据同步调度任务</a-alert>
+   <a-alert style="margin:10px">点击配置按钮，完成数据同步调度任务</a-alert>
 
     <a-row class="mb8">
       <a-col :span="2">
@@ -8,14 +8,7 @@
           type="primary"
           plain
           @click = "openCron=true"
-        >新增</a-button>
-      </a-col>
-      <a-col :span="2">
-        <a-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-        >修改</a-button>
+        >配置</a-button>
       </a-col>
     </a-row>
 
@@ -26,9 +19,6 @@
       Cron表达式生成器
     </template>
       <crontab @hide="openCron=false" @fill="crontabFill" :expression="crontabValueString"></crontab>
-
-      <template #footer>
-    </template>
     </a-modal>
 
 

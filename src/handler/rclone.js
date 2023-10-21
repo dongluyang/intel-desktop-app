@@ -6,6 +6,7 @@ const fs = require('fs');
 const cron = require('node-cron');
 import {saveStoreValue,removeStoreValue,getStoreValue} from './store.js'
 import {handleRootDocument} from './env.js'
+let currentjob = null
   
 export  async function handleRcloneMount (event,projects,storageDir) {
   
@@ -129,9 +130,16 @@ export async function launchCronJob(event,cronExpression,projects,storageDir) {
 
     fs.writeFileSync(documentPath+"\\CGTeam"+'\\obs.txt', fileContent);
 
-
-  // 使用node-cron来创建Cron作业
-  cron.schedule(cronExpression, () => {
+ // 假设您要创建的 Cron 作业的唯一标识是作业名称
+const jobName = 'mydataSyncJob';   
+// 检查作业是否已存在
+if (currentjob!=null) {
+  console.log("stop")
+  // 如果已存在，则修改作业的执行时间
+  currentjob.stop(); // 修改为每 5 分钟执行一次
+} 
+  // 如果不存在，则创建一个新的作业
+  currentjob = cron.schedule(cronExpression, () => {
     // 这里的Cron表达式是 '* * * * *'，表示每分钟执行一次
     // 在这里执行您想要的命令或进程
     for (let project of projects) {
@@ -150,7 +158,7 @@ export async function launchCronJob(event,cronExpression,projects,storageDir) {
         console.log(`stdout: ${stdout}`);
       });
   }
-  });
-
-
+  }, { scheduled: false }); // 注意将 scheduled 设置为 false，以便手动启动
+  currentjob.taskName = jobName; // 为新作业设置名称
+  currentjob.start(); // 启动新作业
 }  
