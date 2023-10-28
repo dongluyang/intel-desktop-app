@@ -162,3 +162,17 @@ export async function getTaskVersionList(taskId) {
     });
   });
   }
+
+  export async function getAssetsOfProjectLimit(projectNames) {
+    const apiUrl = await getTeamApiUrl() + '/getAssetNamesByProjectList';
+    return new Promise((resolve, reject) => {
+      axios
+        .post(apiUrl, { projectNames: projectNames })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }

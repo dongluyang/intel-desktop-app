@@ -91,7 +91,7 @@ export async function quitAllRclone(event) {
 }  
 
 
-export async function launchCronJob(event,cronExpression,projects,storageDir) {
+export async function launchCronJob(event,cronExpression,projects,assets,teamName) {
 
     saveStoreValue(event,"cron_expression",cronExpression)
    
@@ -106,11 +106,6 @@ export async function launchCronJob(event,cronExpression,projects,storageDir) {
     }
 
     const documentPath = await handleRootDocument()
-
-    // 使用 fs.existsSync() 检查目录是否存在
-     if (!fs.existsSync(storageDir)) {
-            fs.mkdirSync(storageDir, { recursive: true });
-     } 
 
     // 生成文件内容
     let fileContent = '';
@@ -142,22 +137,41 @@ if (currentjob!=null) {
   currentjob = cron.schedule(cronExpression, () => {
     // 这里的Cron表达式是 '* * * * *'，表示每分钟执行一次
     // 在这里执行您想要的命令或进程
+    
     for (let project of projects) {
-      const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName,storageDir+project.mainProjectName];
+          // 使用 fs.existsSync() 检查目录是否存在
+     var storageDir = project.localStorage+teamName+"/"+project.mainProjectName+"/"+project.subprojectName     
+     if (!fs.existsSync(storageDir)) {
+          fs.mkdirSync(storageDir, { recursive: true });
+     } 
 
-      console.log(args.join(' '))
-      exec(args.join(' '), (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Error: ${error.message}`);
-          return;
+      for (let asset of assets) {
+
+        if (asset.projectName != project.mainProjectName) {
+            continue
         }
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-          return;
-        }
-        console.log(`stdout: ${stdout}`);
-      });
-  }
+
+        if (!fs.existsSync(storageDir+"/"+asset.name)) {
+          fs.mkdirSync(storageDir+"/"+asset.name, { recursive: true });
+     } 
+
+
+        const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName.toLowerCase()+"/"+asset.name,storageDir+"/"+asset.name];
+
+        console.log(args.join(' '))
+        exec(args.join(' '), (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`stderr: ${stderr}`);
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+        });
+      }
+    }
   }, { scheduled: false }); // 注意将 scheduled 设置为 false，以便手动启动
   currentjob.taskName = jobName; // 为新作业设置名称
   currentjob.start(); // 启动新作业

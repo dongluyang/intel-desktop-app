@@ -28,7 +28,7 @@
 <script>
 import Crontab from '../components/Crontab/index.vue'
 import CrontabResult from '../components/Crontab/result.vue'
-import {listSyncOfProjects} from '../utils/api'
+import {listSyncOfProjects,getAssetsOfProjectLimit} from '../utils/api'
 import { reactive,ref,onMounted } from 'vue';
 export default {
     //组件的注册
@@ -56,7 +56,12 @@ export default {
         listSyncOfProjects(team.id).then(ret=>{
            let storageDir = ret.storagePath
            let subprojects = ret.subprojectList
-           window.rclone.launch_cron_job(cronExpression,subprojects,storageDir+team.groupName+"/")
+           const names = subprojects.map(subject=>subject.subprojectName)
+           const projectNames = names.join(',');
+           getAssetsOfProjectLimit(projectNames).then(assets=>{
+                window.rclone.launch_cron_job(cronExpression,subprojects,assets,team.groupName)
+           });         
+
       })
       }
 
