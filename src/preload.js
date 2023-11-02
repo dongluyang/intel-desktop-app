@@ -40,6 +40,11 @@ contextBridge.exposeInMainWorld('rembg', {
   exec_p: (srcDir,distDir) => ipcRenderer.invoke('doRembgExec',srcDir,distDir),
 })
 
+contextBridge.exposeInMainWorld('gost', {
+  start: (port,admission) => ipcRenderer.send('doGostStart',port,admission),
+  stop: (pid) => ipcRenderer.send('doGostStop',pid)
+})
+
 
 contextBridge.exposeInMainWorld('rclone', {
   mount_to_local: (projects,teamName) => ipcRenderer.send('doRcloneMount',projects,teamName),

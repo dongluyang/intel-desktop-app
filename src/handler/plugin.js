@@ -1,8 +1,9 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
-const { exec,execSync } = require('child_process');
+const { spawn,exec,execSync } = require('child_process');
 const registry = require('winreg');
 const log = require("electron-log")
+import {saveStoreValue,getStoreValue} from './store.js'
 
 export async function handleOpenPlugins (event, pluginName) {
 
@@ -66,3 +67,56 @@ export  async function handleRembgExec (event, srcDir,distDir) {
       console.error(`执行命令时发生错误： ${error.message}`);
     }
   }
+
+
+
+  export  async function handleGostStart (event, port,admission) {
+  
+
+    // 要执行的命令和参数
+    let command;
+    if (isDev) {
+      // 在开发模式下，`rembg.exe` 可能在项目根目录下或其他位置
+      command = path.join(__dirname, '../../resources', 'gost-amd64.exe');
+    } else {
+      // 在生产模式下，`rembg.exe` 位于安装包的 `resources` 文件夹下
+      command = path.join(process.resourcesPath, 'app','resources', 'gost-amd64.exe');
+      log.info(command)
+    }
+    // const command = 'rembg';
+    const args = ['-L=:'+port];
+  
+        try {
+        // 启动一个后台进程
+        const childProcess = spawn(command, args, {
+                detached: true, // 将子进程独立出来，成为一个新的进程组
+                stdio: 'ignore' // 忽略标准输入/输出，将其置为 'ignore' 或 'inherit'
+        });
+            
+        // 子进程已经独立出来，你可以选择是否将其设置为一个新的会话
+        childProcess.unref();
+        
+        saveStoreValue(null,"proxy_info",{"port":port,"admission":admission,"pid":childProcess.pid,"status":"start"})
+       
+
+        } catch (error) {
+        console.error(`执行命令时发生错误： ${error.message}`);
+        }
+  }
+
+
+  export async function handleGostStop(event,pid) {
+    console.log(pid)
+    const proxyInfo = getStoreValue(event,"proxy_info")
+    if (proxyInfo!=null) {
+        try {
+          console.log(pid)
+          process.kill(pid);
+          proxyInfo.status = "stop"
+          saveStoreValue(null,"proxy_info",proxyInfo)
+        }catch (error) {
+          console.log(error)
+        }
+    }
+  }  
+  

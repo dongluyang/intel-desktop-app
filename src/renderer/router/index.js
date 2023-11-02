@@ -10,6 +10,7 @@ import AppList from "../views/AppList.vue"
 import Setting from "../views/Setting.vue"
 import Rembg from "../apps/Rembg.vue"
 import AssetSync from "../apps/AssetSync.vue"
+import Proxy from "../apps/Proxy.vue"
 const About = { template: '<div>About</div>' }
 
 const routes = [
@@ -40,6 +41,10 @@ const routes = [
             {
                 path: '/asset_sync',
                 component: AssetSync, // 子路由组件
+            },
+            {
+                path: '/proxy',
+                component: Proxy, // 子路由组件
             }
         ]
     },

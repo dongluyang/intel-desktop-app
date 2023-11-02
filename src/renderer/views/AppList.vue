@@ -3,8 +3,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { ref,reactive } from "vue";
 const keyword = ref('')
 const scripts = [
-  {title:'Rembg抠像',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/rembg'},
-  {title:'资产数据同步',desc:'CgYun发布',time:'2020-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/asset_sync'},
+  {title:'Rembg抠像',desc:'CgYun发布',time:'2023-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/rembg'},
+  {title:'资产数据同步',desc:'CgYun发布',time:'2023-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/asset_sync'},
+  {title:'代理服务',desc:'CgYun发布',time:'2023-01-01',icon:'https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp',path:'/proxy'},
   ]
 const router = useRouter();
 
