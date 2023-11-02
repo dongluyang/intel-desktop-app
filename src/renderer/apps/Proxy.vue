@@ -17,7 +17,7 @@
        <template #action="{ record }">
           <a-button type="text" v-if="record.status=='stop'" @click="clickRecord(record)">启动</a-button>
           <a-button type="text" v-if="record.status=='start'" @click="clickRecord(record)">关闭</a-button>
-           <a-button type="text" @click="clickRecord(record)">编辑</a-button>
+           <a-button type="text" @click="editRecord(record)">编辑</a-button>
        </template>
 
     </a-table>
@@ -71,7 +71,6 @@ export default {
 
 
 
-   const loading = ref(false) 
    const visible = ref(false) 
    const data = ref([]) 
   
@@ -80,17 +79,34 @@ export default {
       admission:''
     })
    
-   const start = ()=>{
-    window.gost.start(form.port,form.admission)
+   const start = async ()=>{
+     let proxyInfo= await window.intel_configs.get("proxy_info")
+     if (proxyInfo!=null && proxyInfo.pid!=-1) {
+        window.gost.stop(proxyInfo.pid) 
+     }
+     await window.intel_configs.save("proxy_info",{"port":form.port,"admission":form.admission,"pid":-1,"status":"stop"})
+     visible.value =false
    }
 
    const clickRecord = (record)=>{
         if (record.status =='start') {
-            window.gost.stop(record.pid) 
+            window.gost.stop()
+            record.status = "stop" 
         } else {
             window.gost.start(record.port,record.admission) 
+            record.status = "start" 
         }
+
    }
+
+   const editRecord = async (record)=>{
+     visible.value = true
+     let proxyInfo= await window.intel_configs.get("proxy_info")
+     form.port = proxyInfo.port
+     form.admission = proxyInfo.admission
+
+   }
+
 
    onMounted(async () => {
     let proxyInfo= await window.intel_configs.get("proxy_info")
@@ -105,7 +121,8 @@ export default {
         columns,
         data,
         start,
-        clickRecord
+        clickRecord,
+        editRecord
     }
   },
 }

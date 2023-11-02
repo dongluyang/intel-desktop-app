@@ -95,8 +95,15 @@ export  async function handleRembgExec (event, srcDir,distDir) {
             
         // 子进程已经独立出来，你可以选择是否将其设置为一个新的会话
         childProcess.unref();
+
+        const proxyInfo = getStoreValue(event,"proxy_info")
+
+        if (proxyInfo!=null) {
+          proxyInfo.pid = childProcess.pid
+          proxyInfo.status = "start"
+          saveStoreValue(event,"proxy_info",proxyInfo)
+        }
         
-        saveStoreValue(null,"proxy_info",{"port":port,"admission":admission,"pid":childProcess.pid,"status":"start"})
        
 
         } catch (error) {
@@ -105,15 +112,15 @@ export  async function handleRembgExec (event, srcDir,distDir) {
   }
 
 
-  export async function handleGostStop(event,pid) {
-    console.log(pid)
+  export async function handleGostStop(event) {
     const proxyInfo = getStoreValue(event,"proxy_info")
     if (proxyInfo!=null) {
         try {
-          console.log(pid)
+          let pid = proxyInfo.pid
           process.kill(pid);
           proxyInfo.status = "stop"
-          saveStoreValue(null,"proxy_info",proxyInfo)
+          proxyInfo.pid = -1
+          saveStoreValue(event,"proxy_info",proxyInfo)
         }catch (error) {
           console.log(error)
         }
