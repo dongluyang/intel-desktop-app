@@ -46,6 +46,10 @@
     <a-form-item field="admission" tooltip="控制哪些客户端可以访问" label="控制器">
       <a-input v-model="form.admission" placeholder="请输入准入客户端ip或是网段，多项请逗号隔开" />
     </a-form-item>
+
+    <a-form-item field="desc"  label="描述">
+      <a-textarea  v-model="form.desc" placeholder="请输入描述" />
+    </a-form-item>
   </a-form>
     </div>
   </a-modal>
@@ -74,6 +78,10 @@ export default {
         dataIndex: 'status',
       },
       {
+        title: '描述',
+        dataIndex: 'desc',
+      },
+      {
         title: '操作',
         slotName: 'action'
       },
@@ -86,7 +94,8 @@ export default {
    let currentRecord = null
     const form = reactive({
       port: '',
-      admission:''
+      admission:'',
+      desc:''
     })
    
 
@@ -95,6 +104,7 @@ export default {
          window.gost.stop(form.port) 
          currentRecord.port = form.port
          currentRecord.admission = form.admission
+         currentRecord.desc = form.desc
          currentRecord.status = "stop"
      }
 
@@ -107,6 +117,7 @@ export default {
      for (let proxyInfo of proxyInfos) {
          if (proxyInfo.port == form.port) {
             proxyInfo.admission = form.admission
+            proxyInfo.desc = form.desc
             proxyInfo.pid = -1
             proxyInfo.status = 'stop'
             isNew = false
@@ -114,7 +125,7 @@ export default {
      }
 
      if (isNew) {
-        proxyInfos.push({"port":form.port,"admission":form.admission,"pid":-1,"status":"stop"})
+        proxyInfos.push({"port":form.port,"admission":form.admission,"pid":-1,"status":"stop","desc":form.desc})
      }
      data.value = proxyInfos
      await window.intel_configs.save("proxy_infos",proxyInfos)
@@ -137,6 +148,7 @@ export default {
      visible.value = true
      form.port = record.port
      form.admission = record.admission
+     form.desc = record.desc
      currentRecord = record
    }
 
