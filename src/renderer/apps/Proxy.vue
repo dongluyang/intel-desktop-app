@@ -15,14 +15,18 @@
     <a-table :columns="columns" :data="data">
 
        <template #action="{ record }">
-          <a-button type="text" v-if="record.status=='stop'" @click="clickRecord(record)">启动</a-button>
-          <a-button type="text" v-if="record.status=='start'" @click="clickRecord(record)">关闭</a-button>
+         <a-popconfirm content="你确定要启动服务吗?" @ok="clickRecord(record)">
+          <a-button type="text" v-if="record.status=='stop'">启动</a-button>
+         </a-popconfirm>
+         <a-popconfirm content="你确定要关闭服务吗?" @ok="clickRecord(record)">
+          <a-button type="text" v-if="record.status=='start'">关闭</a-button>
+          </a-popconfirm>
            <a-button type="text" @click="editRecord(record)">编辑</a-button>
        </template>
 
     </a-table>
 
-      <a-modal v-model:visible="visible" @cancel="handleCancel" :on-before-ok="start" unmountOnClose>
+      <a-modal v-model:visible="visible" @cancel="handleCancel" :on-before-ok="updateRecord" unmountOnClose>
     <template #title>
       代理配置
     </template>
@@ -79,10 +83,11 @@ export default {
       admission:''
     })
    
-   const start = async ()=>{
+
+    const updateRecord = async()=>{
      let proxyInfo= await window.intel_configs.get("proxy_info")
      if (proxyInfo!=null && proxyInfo.pid!=-1) {
-        window.gost.stop(proxyInfo.pid) 
+        window.gost.stop() 
      }
      await window.intel_configs.save("proxy_info",{"port":form.port,"admission":form.admission,"pid":-1,"status":"stop"})
      visible.value =false
@@ -104,7 +109,8 @@ export default {
      let proxyInfo= await window.intel_configs.get("proxy_info")
      form.port = proxyInfo.port
      form.admission = proxyInfo.admission
-
+     record.port = proxyInfo.port
+     record.admission = proxyInfo.admission
    }
 
 
@@ -120,7 +126,7 @@ export default {
         visible,
         columns,
         data,
-        start,
+        updateRecord,
         clickRecord,
         editRecord
     }
