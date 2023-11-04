@@ -96,15 +96,16 @@ export  async function handleRembgExec (event, srcDir,distDir) {
         // 子进程已经独立出来，你可以选择是否将其设置为一个新的会话
         childProcess.unref();
 
-        const proxyInfo = getStoreValue(event,"proxy_info")
+        const proxyInfos = getStoreValue(event,"proxy_infos")
 
-        if (proxyInfo!=null) {
-          proxyInfo.pid = childProcess.pid
-          proxyInfo.status = "start"
-          saveStoreValue(event,"proxy_info",proxyInfo)
-        }
-        
-       
+        for(let proxyInfo of proxyInfos) {
+           if (proxyInfo.port ==port) {
+               proxyInfo.pid = childProcess.pid
+               proxyInfo.status = "start"
+               saveStoreValue(event,"proxy_infos",proxyInfos)
+               break
+           }
+        }       
 
         } catch (error) {
         console.error(`执行命令时发生错误： ${error.message}`);
@@ -112,18 +113,23 @@ export  async function handleRembgExec (event, srcDir,distDir) {
   }
 
 
-  export async function handleGostStop(event) {
-    const proxyInfo = getStoreValue(event,"proxy_info")
-    if (proxyInfo!=null) {
+  export async function handleGostStop(event,port) {
+    const proxyInfos = getStoreValue(event,"proxy_infos")
+
+    for(let proxyInfo of proxyInfos) {
+      if (proxyInfo.port ==port) {
         try {
-          let pid = proxyInfo.pid
-          process.kill(pid);
-          proxyInfo.status = "stop"
-          proxyInfo.pid = -1
-          saveStoreValue(event,"proxy_info",proxyInfo)
-        }catch (error) {
-          console.log(error)
-        }
-    }
+        let pid = proxyInfo.pid
+        console.log(pid)
+        process.kill(pid);
+        proxyInfo.status = "stop"
+        proxyInfo.pid = -1
+        saveStoreValue(event,"proxy_infos",proxyInfos)
+      }catch (error) {
+        console.log(error)
+      }
+      }
+   }   
+
   }  
   

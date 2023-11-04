@@ -7,7 +7,7 @@
         <a-button
           type="primary"
           plain
-          @click = "visible=true"
+          @click = "openNew"
         >新建</a-button>
       </a-col>
     </a-row>
@@ -77,7 +77,7 @@ export default {
 
    const visible = ref(false) 
    const data = ref([]) 
-  
+   let currentRecord = null
     const form = reactive({
       port: '',
       admission:''
@@ -85,17 +85,40 @@ export default {
    
 
     const updateRecord = async()=>{
-     let proxyInfo= await window.intel_configs.get("proxy_info")
-     if (proxyInfo!=null && proxyInfo.pid!=-1) {
-        window.gost.stop() 
+     if (currentRecord!=null && currentRecord.status=='start') {
+         window.gost.stop(form.port) 
+         currentRecord.port = form.port
+         currentRecord.admission = form.admission
+         currentRecord.status = "stop"
      }
-     await window.intel_configs.save("proxy_info",{"port":form.port,"admission":form.admission,"pid":-1,"status":"stop"})
+
+     let proxyInfos= await window.intel_configs.get("proxy_infos")
+     if (proxyInfos==null) {
+        proxyInfos = []
+     } 
+
+     let isNew = true
+     for (let proxyInfo of proxyInfos) {
+         if (proxyInfo.port == form.port) {
+            proxyInfo.admission = form.admission
+            proxyInfo.pid = -1
+            proxyInfo.status = 'stop'
+            isNew = false
+         }
+     }
+
+     if (isNew) {
+        proxyInfos.push({"port":form.port,"admission":form.admission,"pid":-1,"status":"stop"})
+     }
+     data.value = proxyInfos
+     await window.intel_configs.save("proxy_infos",proxyInfos)
+
      visible.value =false
    }
 
    const clickRecord = (record)=>{
         if (record.status =='start') {
-            window.gost.stop()
+            window.gost.stop(record.port)
             record.status = "stop" 
         } else {
             window.gost.start(record.port,record.admission) 
@@ -106,18 +129,23 @@ export default {
 
    const editRecord = async (record)=>{
      visible.value = true
-     let proxyInfo= await window.intel_configs.get("proxy_info")
-     form.port = proxyInfo.port
-     form.admission = proxyInfo.admission
-     record.port = proxyInfo.port
-     record.admission = proxyInfo.admission
+     form.port = record.port
+     form.admission = record.admission
+     currentRecord = record
+   }
+
+   
+   const openNew =  ()=>{
+     visible.value = true
+     currentRecord = null
    }
 
 
    onMounted(async () => {
-    let proxyInfo= await window.intel_configs.get("proxy_info")
-    if (proxyInfo!=null) {
-        data.value.push(proxyInfo)
+    let proxyInfos= await window.intel_configs.get("proxy_infos")
+    console.log(proxyInfos)
+    if (proxyInfos!=null) {
+        data.value = proxyInfos
     }
    })
 
@@ -126,6 +154,7 @@ export default {
         visible,
         columns,
         data,
+        openNew,
         updateRecord,
         clickRecord,
         editRecord
