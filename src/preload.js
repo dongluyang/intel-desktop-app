@@ -42,7 +42,9 @@ contextBridge.exposeInMainWorld('rembg', {
 
 contextBridge.exposeInMainWorld('gost', {
   start: (port,admission) => ipcRenderer.send('doGostStart',port,admission),
-  stop: (port) => ipcRenderer.send('doGostStop',port)
+  stop: (port) => ipcRenderer.send('doGostStop',port),
+  delete: (port) => ipcRenderer.invoke('doGostDelete',port)
+  
 })
 
 

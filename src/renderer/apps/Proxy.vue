@@ -21,6 +21,11 @@
          <a-popconfirm content="你确定要关闭服务吗?" @ok="clickRecord(record)">
           <a-button type="text" v-if="record.status=='start'">关闭</a-button>
           </a-popconfirm>
+
+         <a-popconfirm content="你确定要删除服务吗?" @ok="deleteRecord(record)">
+          <a-button type="text">删除</a-button>
+          </a-popconfirm>
+
            <a-button type="text" @click="editRecord(record)">编辑</a-button>
        </template>
 
@@ -51,6 +56,7 @@
 
 <script>
 import { reactive,ref,onMounted } from 'vue';
+import { Message } from '@arco-design/web-vue';
 export default {
   setup() {
 
@@ -134,6 +140,15 @@ export default {
      currentRecord = record
    }
 
+   const deleteRecord = async (record)=>{
+        if (record.status =='start') {
+          Message.error('请先关闭服务!')
+        } else {
+            data.value = await window.gost.delete(record.port) 
+        }
+
+   }
+
    
    const openNew =  ()=>{
      visible.value = true
@@ -157,7 +172,8 @@ export default {
         openNew,
         updateRecord,
         clickRecord,
-        editRecord
+        editRecord,
+        deleteRecord
     }
   },
 }

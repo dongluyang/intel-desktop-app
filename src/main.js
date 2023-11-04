@@ -6,7 +6,7 @@ const isDev = require('electron-is-dev');
 import autoUpdater from './update'
 const registry = require('winreg');
 const log = require("electron-log")
-import {handleOpenPlugins,handleRembgExec,handleGostStart,handleGostStop} from './handler/plugin'
+import {handleOpenPlugins,handleRembgExec,handleGostStart,handleGostStop,handleGostDelete} from './handler/plugin'
 import {handleRcloneMount,quitAllRclone,launchCronJob} from './handler/rclone'
 import {getMayaPlugin} from './handler/maya_plugin'
 import {handleRootDocument} from './handler/env'
@@ -119,6 +119,8 @@ app.on('ready', ()=>{
   ipcMain.on('doLaunchCronJob',launchCronJob)
   ipcMain.on('doGostStart',handleGostStart)
   ipcMain.on('doGostStop',handleGostStop)
+  ipcMain.handle('doGostDelete',handleGostDelete)
+  
   
   createWindow()
 

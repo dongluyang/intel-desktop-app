@@ -132,4 +132,12 @@ export  async function handleRembgExec (event, srcDir,distDir) {
    }   
 
   }  
+
+
+  export async function handleGostDelete(event,port) {
+    const proxyInfos = getStoreValue(event,"proxy_infos")
+    const newArray = proxyInfos.filter(item => item.port !== port); 
+    saveStoreValue(event,"proxy_infos",newArray)
+    return newArray
+  }  
   
