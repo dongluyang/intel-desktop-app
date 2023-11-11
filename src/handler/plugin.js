@@ -77,14 +77,14 @@ export  async function handleRembgExec (event, srcDir,distDir) {
     let command;
     if (isDev) {
       // 在开发模式下，`rembg.exe` 可能在项目根目录下或其他位置
-      command = path.join(__dirname, '../../resources', 'gost-amd64.exe');
+      command = path.join(__dirname, '../../resources', 'gost.exe');
     } else {
       // 在生产模式下，`rembg.exe` 位于安装包的 `resources` 文件夹下
-      command = path.join(process.resourcesPath, 'app','resources', 'gost-amd64.exe');
+      command = path.join(process.resourcesPath, 'app','resources', 'gost.exe');
       log.info(command)
     }
     // const command = 'rembg';
-    const args = ['-L=:'+port];
+    const args = ['-L=:'+port+(admission!=''?'?admission=~'+admission:'')];
   
         try {
         // 启动一个后台进程
