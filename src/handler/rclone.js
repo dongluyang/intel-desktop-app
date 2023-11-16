@@ -4,9 +4,71 @@ const {spawn,exec } = require('child_process');
 const log = require("electron-log")
 const fs = require('fs');
 const cron = require('node-cron');
+const yauzl = require('yauzl');
 import {saveStoreValue,removeStoreValue,getStoreValue} from './store.js'
 import {handleRootDocument} from './env.js'
 let currentjob = null
+
+
+// 获取目录下的所有 Zip 文件
+function getZipFilesInDirectory(directoryPath) {
+  try {
+    const dataFiles = fs.readdirSync(directoryPath);
+    const zipFiles = dataFiles.filter(dataFile => path.extname(dataFile).toLowerCase() === '.zip' && dataFile.indexOf("texture")!=-1);
+    return zipFiles.map(zipFile => path.join(directoryPath,zipFile));
+    
+  } catch (error) {
+    console.error('Error reading directory:', error.message);
+    return [];
+  }
+}
+
+
+
+// 解压函数
+function unzip(zipFilePath, targetDir) {
+  yauzl.open(zipFilePath, { lazyEntries: true }, (err, zipfile) => {
+    if (err) throw err;
+
+    zipfile.readEntry();
+    zipfile.on('entry', (entry) => {
+      const targetFile = path.join(targetDir, entry.fileName);
+
+      if (/\/$/.test(entry.fileName)) {
+        // 如果是目录，则创建目录
+        mkdirp(targetFile, (err) => {
+          if (err) throw err;
+          zipfile.readEntry();
+        });
+      } else {
+        // 删除已存在的文件，然后创建文件并写入数据
+        if (fs.existsSync(targetFile)) {
+          fs.unlinkSync(targetFile);
+        }
+
+        zipfile.openReadStream(entry, (err, readStream) => {
+          if (err) throw err;
+          readStream.on('end', () => {
+            zipfile.readEntry();
+          });
+
+          const writeStream = fs.createWriteStream(targetFile);
+          readStream.pipe(writeStream);
+        });
+      }
+    });
+
+    zipfile.on('end', () => {
+      console.log('解压完成');
+    });
+  });
+}
+
+
+
+
+
+
   
 export  async function handleRcloneMount (event,projects,storageDir) {
   
@@ -112,6 +174,7 @@ export async function launchCronJob(event,cronExpression,projects,assets,teamNam
 
     for (let project of projects) {
         const parsedData = JSON.parse(project.storageOption);
+        console.log(parsedData.region)
         const parts = parsedData.region.split('.')
         fileContent += "["+project.mainProjectName+"]\n"
         fileContent +=  "type = s3\n"
@@ -147,7 +210,8 @@ if (currentjob!=null) {
 
       for (let asset of assets) {
 
-        if (asset.projectName != project.mainProjectName) {
+        if (asset.projectName != project.subprojectName) {
+          console.log(asset.projectName+"："+project.subprojectName)
             continue
         }
 
@@ -157,19 +221,21 @@ if (currentjob!=null) {
 
 
         const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName.toLowerCase()+"/"+asset.name,storageDir+"/"+asset.name];
-
-        console.log(args.join(' '))
-        exec(args.join(' '), (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.error(`stderr: ${stderr}`);
-            return;
-          }
-          console.log(`stdout: ${stdout}`);
-        });
+        const textureZips = getZipFilesInDirectory(storageDir+"/"+asset.name)
+        for (let textureZip of textureZips) {
+          unzip(textureZip,storageDir+"/"+asset.name+"/texture")
+        }
+        // exec(args.join(' '), (error, stdout, stderr) => {
+        //   if (error) {
+        //     console.error(`Error: ${error.message}`);
+        //     return;
+        //   }
+        //   if (stderr) {
+        //     console.error(`stderr: ${stderr}`);
+        //     return;
+        //   }
+        //   console.log(`stdout: ${stdout}`);
+        // });
       }
     }
   }, { scheduled: false }); // 注意将 scheduled 设置为 false，以便手动启动
