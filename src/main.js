@@ -121,7 +121,6 @@ app.on('ready', ()=>{
   ipcMain.on('doGostStop',handleGostStop)
   ipcMain.handle('doGostDelete',handleGostDelete)
   
-  
   createWindow()
 
   // 创建系统托盘图标

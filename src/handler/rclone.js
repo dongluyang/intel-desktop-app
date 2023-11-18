@@ -24,9 +24,26 @@ function getZipFilesInDirectory(directoryPath) {
 }
 
 
+// 获取目录下的所有 ma、mb 文件
+function getAssetFilesInDirectory(directoryPath) {
+  try {
+    const dataFiles = fs.readdirSync(directoryPath);
+    const assetFiles = dataFiles.filter(dataFile => path.extname(dataFile).toLowerCase() === '.ma' || path.extname(dataFile).toLowerCase() === '.mb');
+    return assetFiles.map(assetFile => path.join(directoryPath,assetFile));
+    
+  } catch (error) {
+    console.error('Error reading directory:', error.message);
+    return [];
+  }
+}
+
+
 
 // 解压函数
 function unzip(zipFilePath, targetDir) {
+  if (!fs.existsSync(targetDir)) {
+    fs.mkdirSync(targetDir, { recursive: true });
+  } 
   yauzl.open(zipFilePath, { lazyEntries: true }, (err, zipfile) => {
     if (err) throw err;
 
@@ -206,36 +223,96 @@ if (currentjob!=null) {
      var storageDir = project.localStorage+teamName+"/"+project.mainProjectName+"/"+project.subprojectName     
      if (!fs.existsSync(storageDir)) {
           fs.mkdirSync(storageDir, { recursive: true });
-     } 
+     }
+     
+     var assetNames4Project = assets.filter(asset=>asset.projectName == project.subprojectName).map(asset=>asset.name)
 
       for (let asset of assets) {
 
         if (asset.projectName != project.subprojectName) {
-          console.log(asset.projectName+"："+project.subprojectName)
+            console.log(asset.projectName+"："+project.subprojectName)
             continue
-        }
-
+        } 
         if (!fs.existsSync(storageDir+"/"+asset.name)) {
           fs.mkdirSync(storageDir+"/"+asset.name, { recursive: true });
-     } 
+        } 
 
 
         const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName.toLowerCase()+"/"+asset.name,storageDir+"/"+asset.name];
-        const textureZips = getZipFilesInDirectory(storageDir+"/"+asset.name)
-        for (let textureZip of textureZips) {
-          unzip(textureZip,storageDir+"/"+asset.name+"/texture")
-        }
-        // exec(args.join(' '), (error, stdout, stderr) => {
-        //   if (error) {
-        //     console.error(`Error: ${error.message}`);
-        //     return;
-        //   }
-        //   if (stderr) {
-        //     console.error(`stderr: ${stderr}`);
-        //     return;
-        //   }
-        //   console.log(`stdout: ${stdout}`);
-        // });
+
+
+        exec(args.join(' '), (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error: ${error.message}`);
+            return;
+          }
+          if (stderr) {
+            console.error(`stderr: ${stderr}`);
+            return;
+          }
+
+          const textureZips = getZipFilesInDirectory(storageDir+"/"+asset.name)
+          for (let textureZip of textureZips) {
+            unzip(textureZip,storageDir+"/"+asset.name+"/texture")
+          }
+
+          console.log(`stdout: ${stdout}`);
+
+          const assetFiles =   getAssetFilesInDirectory(storageDir+"/"+asset.name)
+
+          for (let assetFile of assetFiles) {
+ 
+              // 使用path模块解析文件路径
+              const oldFileNameWithExtension = path.basename(assetFile);
+              const fileExtension = path.extname(oldFileNameWithExtension);
+              const oldFileName = path.basename(oldFileNameWithExtension, fileExtension);
+
+              // 构建新的文件名
+              const newFileName = oldFileName + '_tmp' + fileExtension;
+              const newFilePath = path.join(path.dirname(assetFile), newFileName);
+
+              // 调用fs.rename()来重命名文件
+              fs.rename(assetFile, newFilePath, (err) => {
+                if (err) {
+                  console.error(err);
+                } else {
+                  console.log('文件重命名成功！');
+
+               //生成gb.json文件
+               const jsonData = {
+                "assetList": assetNames4Project,
+                "assetName":asset.name,
+                "fileName_in":newFilePath,
+                "fileName_out":assetFile,
+                "projectDir":storageDir,
+                "refProjectDir": storageDir
+              }
+
+              // 将JSON数据转换为字符串
+                const jsonString = JSON.stringify(jsonData, null, 2);
+                
+                try {
+                  const currentTimestamp = Date.now();
+                  const currentDate = new Date(currentTimestamp);
+                  const dateString = currentDate.toTimeString();
+                  // 使用fs.writeFileSync同步写入文件
+                  fs.writeFileSync( path.join(path.dirname(assetFile), "gb.json"), jsonString, 'utf-8');
+                  console.log('文件同步写入成功！');
+                } catch (err) {
+                  console.error('写入文件时发生错误:', err);
+                }
+
+
+                }
+              });
+
+
+          }
+
+
+
+
+        });
       }
     }
   }, { scheduled: false }); // 注意将 scheduled 设置为 false，以便手动启动
