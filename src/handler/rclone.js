@@ -38,6 +38,36 @@ function getAssetFilesInDirectory(directoryPath) {
 }
 
 
+function executeFileProcess() {
+    // 设置命令执行的选项，包括工作目录和环境变量
+    const options = {
+      // env: { PATH: customPath+path.delimiter+process.env.PATH},
+      encoding: 'utf-8'
+    };
+  
+  
+    // 要执行的命令和参数
+    let command;
+    if (isDev) {
+      // 在开发模式下，`rembg.exe` 可能在项目根目录下或其他位置
+      command = path.join(__dirname, '../../resources', 'convert.exe');
+    } else {
+      // 在生产模式下，`rembg.exe` 位于安装包的 `resources` 文件夹下
+      command = path.join(process.resourcesPath, 'app','resources', 'convert.exe');
+      log.info(command)
+    }
+  
+    try {
+      // 同步执行命令
+      const output = execSync(`${command}`, options);
+      console.log(`命令输出：\n${output}`);
+      return output
+    } catch (error) {
+      console.error(`执行命令时发生错误： ${error.message}`);
+    }
+}
+
+
 
 // 解压函数
 function unzip(zipFilePath, targetDir) {
@@ -292,9 +322,6 @@ if (currentjob!=null) {
                 const jsonString = JSON.stringify(jsonData, null, 2);
                 
                 try {
-                  const currentTimestamp = Date.now();
-                  const currentDate = new Date(currentTimestamp);
-                  const dateString = currentDate.toTimeString();
                   // 使用fs.writeFileSync同步写入文件
                   fs.writeFileSync( path.join(path.dirname(assetFile), "gb.json"), jsonString, 'utf-8');
                   console.log('文件同步写入成功！');
