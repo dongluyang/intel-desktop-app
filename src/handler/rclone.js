@@ -1,6 +1,6 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
-const {spawn,exec } = require('child_process');
+const {spawn,exec,execSync } = require('child_process');
 const log = require("electron-log")
 const fs = require('fs');
 const cron = require('node-cron');
@@ -38,7 +38,7 @@ function getAssetFilesInDirectory(directoryPath) {
 }
 
 
-function executeFileProcess() {
+function executeFileProcess(filePath) {
     // 设置命令执行的选项，包括工作目录和环境变量
     const options = {
       // env: { PATH: customPath+path.delimiter+process.env.PATH},
@@ -58,8 +58,9 @@ function executeFileProcess() {
     }
   
     try {
+      let args = [filePath]
       // 同步执行命令
-      const output = execSync(`${command}`, options);
+      const output = execSync(`${command} ${args.join(' ')}`, options);
       console.log(`命令输出：\n${output}`);
       return output
     } catch (error) {
@@ -323,7 +324,8 @@ if (currentjob!=null) {
                 
                 try {
                   // 使用fs.writeFileSync同步写入文件
-                  fs.writeFileSync( path.join(path.dirname(assetFile), "gb.json"), jsonString, 'utf-8');
+                  fs.writeFileSync( path.join(path.dirname(assetFile), "config.json"), jsonString, 'utf-8');
+                  executeFileProcess(path.join(path.dirname(assetFile), "config.json"))
                   console.log('文件同步写入成功！');
                 } catch (err) {
                   console.error('写入文件时发生错误:', err);
