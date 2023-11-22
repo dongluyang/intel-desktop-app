@@ -348,3 +348,11 @@ if (currentjob!=null) {
   currentjob.taskName = jobName; // 为新作业设置名称
   currentjob.start(); // 启动新作业
 }  
+
+export function handleCronJobStatus() {
+  if (currentjob!=null) {
+     return "active"
+  } else {
+     return "inactive"
+  }
+}

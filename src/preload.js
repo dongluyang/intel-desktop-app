@@ -51,5 +51,6 @@ contextBridge.exposeInMainWorld('gost', {
 contextBridge.exposeInMainWorld('rclone', {
   mount_to_local: (projects,teamName) => ipcRenderer.send('doRcloneMount',projects,teamName),
   quit_app: () => ipcRenderer.invoke('quitApp'),
-  launch_cron_job: (cronExpression,projects,assets,teamName) => ipcRenderer.send('doLaunchCronJob',cronExpression,projects,assets,teamName)
+  launch_cron_job: (cronExpression,projects,assets,teamName) => ipcRenderer.send('doLaunchCronJob',cronExpression,projects,assets,teamName),
+  get_status: ()=> ipcRenderer.invoke('getCronJobStatus')
 })

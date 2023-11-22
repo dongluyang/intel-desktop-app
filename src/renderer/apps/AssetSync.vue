@@ -10,6 +10,9 @@
           @click = "openCron=true"
         >配置</a-button>
       </a-col>
+      <a-col :span="12" v-if="status=='inactive'">
+        <a-alert type="warning">系统还没生效，请点击配置按钮，配置调度任务！</a-alert>
+      </a-col>
     </a-row>
 
     <CrontabResult v-if="crontabValueString!=''" :ex="crontabValueString"></CrontabResult>
@@ -42,9 +45,11 @@ export default {
    const openCron = ref(false) 
    const footer = ref(false) 
    const crontabValueString = ref('')
+   const status = ref('')
 
    onMounted(async () => {
     crontabValueString.value = await window.intel_configs.get("cron_expression")
+    status.value = await window.rclone.get_status()
 })
 
     /** 确定后回传值 */
@@ -59,7 +64,8 @@ export default {
            const names = subprojects.map(subject=>subject.subprojectName)
            const projectNames = names.join(',');
            getAssetsOfProjectLimit(projectNames).then(assets=>{
-                window.rclone.launch_cron_job(cronExpression,subprojects,assets,team.groupName)
+                 window.rclone.launch_cron_job(cronExpression,subprojects,assets,team.groupName)
+                 status.value = 'active'
            });         
 
       })
@@ -71,7 +77,8 @@ export default {
        openCron, 
        crontabValueString,
        crontabFill,
-       footer
+       footer,
+       status
     }
   },
 }
