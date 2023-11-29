@@ -337,7 +337,7 @@ if (currentjob!=null) {
   currentjob.stop(); // 修改为每 5 分钟执行一次
 } 
   // 如果不存在，则创建一个新的作业
-  currentjob = cron.schedule(cronExpression, () => {
+  currentjob = cron.schedule(cronExpression,async () => {
     // 这里的Cron表达式是 '* * * * *'，表示每分钟执行一次
     // 在这里执行您想要的命令或进程
     
