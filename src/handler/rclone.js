@@ -1,6 +1,6 @@
 const path = require('path');
 const isDev = require('electron-is-dev');
-const {spawn,exec,execSync } = require('child_process');
+const {spawn,execSync,exec } = require('child_process');
 const log = require("electron-log")
 const fs = require('fs');
 const cron = require('node-cron');
@@ -198,7 +198,100 @@ export async function quitAllRclone(event) {
     }
   }
   removeStoreValue(event,"rclone_pid")
-}  
+}
+
+
+
+
+
+
+
+async function executeCommandAsync(command,storageDir,asset,assetNames4Project) {
+  // return new Promise((resolve, reject) => {
+    exec(command.join(' '), (error, stdout, stderr) => {
+      if (error) {
+        console.error(`${args.join(' ')}Error: ${error}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        return;
+      }
+
+    console.log(command.join(' ')+"####"+storageDir+"/"+asset.name)
+
+      const textureZips = getZipFilesInDirectory(storageDir+"/"+asset.name)
+      const assetFiles =   getAssetFilesInDirectory(storageDir+"/"+asset.name)
+
+      
+      for (let textureZip of textureZips) {
+        unzip(textureZip,storageDir+"/"+asset.name+"/texture")
+      }
+
+     
+
+      for (let assetFile of assetFiles) {
+
+          // 使用path模块解析文件路径
+          const oldFileNameWithExtension = path.basename(assetFile);
+          const fileExtension = path.extname(oldFileNameWithExtension);
+          const oldFileName = path.basename(oldFileNameWithExtension, fileExtension);
+
+          // 构建新的文件名
+          const newFileName = oldFileName + '_tmp' + fileExtension;
+          const newFilePath = path.join(path.dirname(assetFile), newFileName);
+
+
+          // 删除可能已存在的文件
+          if (fs.existsSync(newFilePath)) {
+            try {
+              fs.unlinkSync(newFilePath);
+              console.log('已删除已存在的文件:', newFilePath);
+            } catch (err) {
+              console.error('删除文件时出错:', err);
+            }
+          }
+
+
+
+          // 调用fs.rename()来重命名文件
+          fs.rename(assetFile, newFilePath, (err) => {
+            if (err) {
+              console.error(err);
+            } else {
+
+           //生成gb.json文件
+           const jsonData = {
+            "assetList": assetNames4Project,
+            "assetName":asset.name,
+            "fileName_in":newFilePath,
+            "fileName_out":assetFile,
+            "projectDir":storageDir,
+            "refProjectDir": storageDir
+          }
+
+          // 将JSON数据转换为字符串
+            const jsonString = JSON.stringify(jsonData, null, 2);
+            
+            try {
+              // 使用fs.writeFileSync同步写入文件
+              fs.writeFileSync( path.join(path.dirname(assetFile), "config.json"), jsonString, 'utf-8');
+              executeFileProcess(path.join(path.dirname(assetFile), "config.json"))
+              fs.unlinkSync(newFilePath);
+            } catch (err) {
+              console.error('err happens when file is write:', err);
+            }
+
+            }
+          });
+
+      }
+
+    });
+  // });
+}
+
+
 
 
 export async function launchCronJob(event,cronExpression,projects,assets,teamName) {
@@ -222,7 +315,6 @@ export async function launchCronJob(event,cronExpression,projects,assets,teamNam
 
     for (let project of projects) {
         const parsedData = JSON.parse(project.storageOption);
-        console.log(parsedData.region)
         const parts = parsedData.region.split('.')
         fileContent += "["+project.mainProjectName+"]\n"
         fileContent +=  "type = s3\n"
@@ -250,8 +342,8 @@ if (currentjob!=null) {
     // 在这里执行您想要的命令或进程
     
     for (let project of projects) {
-          // 使用 fs.existsSync() 检查目录是否存在
-     var storageDir = project.localStorage+teamName+"/"+project.mainProjectName+"/"+project.subprojectName     
+      // 使用 fs.existsSync() 检查目录是否存在
+     var storageDir = project.localStorage+teamName+"/"+project.mainProjectName.toLowerCase()+"/"+project.subprojectName     
      if (!fs.existsSync(storageDir)) {
           fs.mkdirSync(storageDir, { recursive: true });
      }
@@ -261,7 +353,6 @@ if (currentjob!=null) {
       for (let asset of assets) {
 
         if (asset.projectName != project.subprojectName) {
-            console.log(asset.projectName+"："+project.subprojectName)
             continue
         } 
         if (!fs.existsSync(storageDir+"/"+asset.name)) {
@@ -269,83 +360,15 @@ if (currentjob!=null) {
         } 
 
 
-        const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','sync',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName.toLowerCase()+"/"+asset.name,storageDir+"/"+asset.name];
+        const args = [command,'--config='+documentPath+"\\CGTeam"+'\\obs.txt','copy','--update',project.mainProjectName+':'+project.mainProjectName.toLowerCase()+"/"+project.subprojectName+"/"+asset.name,storageDir+"/"+asset.name];
 
+        executeCommandAsync(args,storageDir,asset,assetNames4Project)
 
-        exec(args.join(' '), (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.error(`stderr: ${stderr}`);
-            return;
-          }
-
-          const textureZips = getZipFilesInDirectory(storageDir+"/"+asset.name)
-          for (let textureZip of textureZips) {
-            unzip(textureZip,storageDir+"/"+asset.name+"/texture")
-          }
-
-          console.log(`stdout: ${stdout}`);
-
-          const assetFiles =   getAssetFilesInDirectory(storageDir+"/"+asset.name)
-
-          for (let assetFile of assetFiles) {
- 
-              // 使用path模块解析文件路径
-              const oldFileNameWithExtension = path.basename(assetFile);
-              const fileExtension = path.extname(oldFileNameWithExtension);
-              const oldFileName = path.basename(oldFileNameWithExtension, fileExtension);
-
-              // 构建新的文件名
-              const newFileName = oldFileName + '_tmp' + fileExtension;
-              const newFilePath = path.join(path.dirname(assetFile), newFileName);
-
-              // 调用fs.rename()来重命名文件
-              fs.rename(assetFile, newFilePath, (err) => {
-                if (err) {
-                  console.error(err);
-                } else {
-                  console.log('文件重命名成功！');
-
-               //生成gb.json文件
-               const jsonData = {
-                "assetList": assetNames4Project,
-                "assetName":asset.name,
-                "fileName_in":newFilePath,
-                "fileName_out":assetFile,
-                "projectDir":storageDir,
-                "refProjectDir": storageDir
-              }
-
-              // 将JSON数据转换为字符串
-                const jsonString = JSON.stringify(jsonData, null, 2);
-                
-                try {
-                  // 使用fs.writeFileSync同步写入文件
-                  fs.writeFileSync( path.join(path.dirname(assetFile), "config.json"), jsonString, 'utf-8');
-                  executeFileProcess(path.join(path.dirname(assetFile), "config.json"))
-                  console.log('文件同步写入成功！');
-                } catch (err) {
-                  console.error('写入文件时发生错误:', err);
-                }
-
-
-                }
-              });
-
-
-          }
-
-
-
-
-        });
       }
     }
   }, { scheduled: false }); // 注意将 scheduled 设置为 false，以便手动启动
   currentjob.taskName = jobName; // 为新作业设置名称
+  console.log("new job start")
   currentjob.start(); // 启动新作业
 }  
 
