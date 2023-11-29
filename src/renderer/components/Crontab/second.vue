@@ -55,7 +55,7 @@ const props = defineProps({
         }
     }
 })
-const radioValue = ref(1)
+const radioValue = ref()
 const cycle01 = ref(0)
 const cycle02 = ref(1)
 const average01 = ref(0)

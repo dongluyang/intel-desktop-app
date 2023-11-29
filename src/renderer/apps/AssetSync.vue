@@ -64,7 +64,7 @@ export default {
            const names = subprojects.map(subject=>subject.subprojectName)
            const projectNames = names.join(',');
            getAssetsOfProjectLimit(projectNames).then(assets=>{
-                 window.rclone.launch_cron_job(cronExpression,subprojects,assets,team.groupName)
+                 window.rclone.launch_cron_job(cronExpression,subprojects,assets,team.clientId)
                  status.value = 'active'
            });         
 
