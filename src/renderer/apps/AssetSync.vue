@@ -66,6 +66,11 @@ export default {
     crontabValueString.value = await window.intel_configs.get("cron_expression")
     status.value = await window.rclone.get_status()
     const teamConfig = await window.intel_configs.get("current_team_setting")
+    subprojects = await window.intel_configs.get("filtered_projects")
+    console.log(subprojects)
+    if (subprojects!=null) {
+       selectedSubProjects.value = JSON.parse(subprojects)
+    }
       if (teamConfig!=null) {
         const team = JSON.parse(teamConfig)
         listSyncOfProjects(team.id).then(ret=>{
@@ -91,6 +96,7 @@ export default {
         console.log(projs)
         getAssetsOfProjectLimit(projectNames).then(assets=>{
                  window.rclone.launch_cron_job(cronExpression,projs,assets,team.clientId)
+                 window.intel_configs.save("filtered_projects",JSON.stringify(selectedSubProjects.value))
                  status.value = 'active'
         });   
       }
