@@ -96,7 +96,7 @@
       <div>审核通过！</div>
     </a-modal>
 
-      <a-modal v-model:show="showRollback"  hideCancel="true" @ok="onReturnTask">
+      <a-modal v-model:visible="showRollback"  hideCancel="true" @ok="onReturnTask">
         <template #title>
           <div>提示</div>
         </template>
@@ -350,6 +350,7 @@ export default {
     showRollbackDialog(filelist) {
       if (filelist !== null)
         this.fileList = filelist
+      console.log(this.showRollback)  
       this.showRollback = true
     },
     async pass() {
@@ -382,9 +383,11 @@ export default {
       } else if (this.$refs['preview-player'].isMovie && this.$refs['preview-player'].isReturn && flag) {   //视频最后一帧批注退回
         this.$refs['preview-player'].captureImage(false)
       } else {
+        const userInfo = await getUserInfo()
+
         if (this.fileList !== null) {
           for (let i = 0; i < this.fileList.length; i ++) {
-            formdata.append("checkinors", getUserInfo().userName)
+            formdata.append("checkinors", userInfo.userName)
             formdata.append("notes", this.content)
             formdata.append(this.fileList[i].name, this.fileList[i].file)
             formdata.append("filenames", this.fileList[i].name)
@@ -408,7 +411,7 @@ export default {
         formdata.append("isReturn", true)
         formdata.append("isPass",false)
         formdata.append("taskId",this.taskId)
-        formdata.append("user",getUserInfo().userName)
+        formdata.append("user",userInfo.userName)
 
         let result = await postReview(formdata);
         if (result.status === 0) {
@@ -446,12 +449,13 @@ export default {
       this.isSendBack = false
     },
 
-    saveReturnFile(list) {
+    async saveReturnFile(list) {
       let str = this.content
       if (this.taskPreviews.length > 0) {
         const file = new File([list.file], list.filename, {type: 'image/png'});
+        const userInfo = await getUserInfo()
         let list2 = {
-          "checkinor": getUserInfo().userName,
+          "checkinor": userInfo.userName,
           "notes": str,
           "file": file,
           "filename": list.filename,

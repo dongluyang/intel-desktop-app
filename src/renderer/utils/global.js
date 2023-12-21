@@ -8,7 +8,7 @@ export async function getTeamApiUrl() {
 }
 
 export async function getUserInfo() {
-    defaultConfig = await window.intel_configs.get("user_info")
+    const defaultConfig = await window.intel_configs.get("user_info")
     if (defaultConfig!=null) {
       const existedUserInfoConfig = JSON.parse(defaultConfig)
       return {'userName':existedUserInfoConfig.userName,'accessToken':existedUserInfoConfig.accessToken}

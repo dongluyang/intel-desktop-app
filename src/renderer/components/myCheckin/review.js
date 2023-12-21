@@ -5,7 +5,7 @@ import { getTeamApiUrl } from "../../utils/global";
 
 
 export async function listComment(submitId) {
-  const apiUrl = getTeamApiUrl() + '/getSubmitsReturn';
+  const apiUrl = await getTeamApiUrl() + '/getSubmitsReturn';
   return new Promise((resolve, reject) => {
     axios
       .post(apiUrl, {id:submitId})
@@ -21,7 +21,7 @@ export async function listComment(submitId) {
 
 // 新增审验评论
 export async function addComment(checkinor, replyText, submitId, fileInfoList) {
-  const commentUrl = getTeamApiUrl() + '/addReturnFileIDList';
+  const commentUrl = await getTeamApiUrl() + '/addReturnFileIDList';
   return new Promise((resolve, reject) => {
     axios
       .post(commentUrl, {checkinor:checkinor,notes:replyText,submitID:submitId, fileInfoList: fileInfoList})
@@ -70,7 +70,7 @@ export async function postReview(formdata) {
 
 // 删除审验评论
 export async function deleteComment(id, submitId) {
-  const deleteUrl = getTeamApiUrl() + '/deleteSubmitReturnFile';
+  const deleteUrl = await getTeamApiUrl() + '/deleteSubmitReturnFile';
   return new Promise((resolve, reject) => {
     axios
       .post(deleteUrl, {id: id, submitId: submitId})
@@ -86,7 +86,7 @@ export async function deleteComment(id, submitId) {
 
 // 修改审验评论
 export async function updateComment(list, submitId) {
-  const updateUrl = getTeamApiUrl() + '/updateSubmitReturnNotes';
+  const updateUrl = await getTeamApiUrl() + '/updateSubmitReturnNotes';
   return new Promise((resolve, reject) => {
     axios
       .post(updateUrl, {id: list.id, newCom: list.content, submitId: submitId})
@@ -101,7 +101,7 @@ export async function updateComment(list, submitId) {
 
 // 下载文件
 export async function download(list) {
-  const downloadUrl = getTeamApiUrl() + '/downloadReturnFile';
+  const downloadUrl = await getTeamApiUrl() + '/downloadReturnFile';
   axios
     .post(downloadUrl, {id: list.id, name: list.name}, {responseType: "blob"})
     .then((res) => {
