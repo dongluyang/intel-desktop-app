@@ -50,13 +50,16 @@
             {{ comment.filename }}
           </a-button>
 
-          <a-input
-            v-model:value="newCom"
-            type="textarea"
+
+         <a-textarea 
+            ref="refName"
+            v-model="newCom"
             placeholder="请给予宝贵的意见"
             v-show="isUpd"
             style="margin-top: 10px; margin-bottom: 5px"
-          />
+            @change="updateContent"
+         />
+
         </div>
       </div>
 
@@ -86,18 +89,11 @@ import moment from 'moment'
 import { renderComment } from '../lib/render'
 import { formatDate, parseDate } from '../lib/time'
 import { Trash as TrashIcon, Pencil as PencilIcon, Attach as AttachIcon} from "@vicons/ionicons5";
+import { defineComponent, ref,watch, reactive, computed,onMounted} from "vue";
 
-export default {
-  name: 'comment',
 
-  data () {
-    return {
-      isShow: false,
-      newCom: this.comment.notes,
-      isUpd: false
-    }
-  },
-
+export default defineComponent({
+  name: "comment",
   props: {
     comment: {
       type: Object,
@@ -124,64 +120,99 @@ export default {
       default: false
     }
   },
-
-  computed: {
-    commentDate () {
-      return moment(this.comment.createDate).tz('Asia/Shanghai')
-    },
-
-    fullDate () {
-      return this.commentDate
-        .format('YYYY-MM-DD HH:mm:ss')
-    },
-
-    shortDate () {
-      if (moment().diff(this.commentDate, 'days') > 1) {
-        return this.commentDate.format('MM/DD')
-      } else {
-        return this.commentDate.format('HH:mm')
-      }
-    }
-  },
-
-  mounted(){
-        window.intel_configs.get("user_info").then(defaultConfig=>{
-            if (defaultConfig!=null) {
-              const existedUserInfoConfig = JSON.parse(defaultConfig)
-              this.isShow = existedUserInfoConfig.userName === this.comment.checkinor
-            }
-        })
-  },
-
   components: {
     TrashIcon, PencilIcon, AttachIcon
   },
+  setup (props, ctx) {
+    const refName = ref()
+    const isShow = ref(false)
+    const newCom = ref(props.comment.notes)
+    const isUpd = ref(false)
+    const commentDate = computed(() => {
+      return moment(props.comment.createDate).tz('Asia/Shanghai');
+    })
 
-  methods: {
-    formatDate (date) {
+    const fullDate = computed(() => {
+      return commentDate.value.format('YYYY-MM-DD HH:mm:ss');
+    })
+
+    const shortDate = computed(() => {
+      if (moment().diff(commentDate.value, 'days') > 1) {
+        return commentDate.value.format('MM/DD');
+      } else {
+        return commentDate.value.format('HH:mm');
+      }
+    })
+
+
+
+
+    const formatDate = (date)=> {
       return formatDate(date)
-    },
-
-    renderComment,
-
-    deleteComment() {
-      this.$emit("delete-comment", this.comment.id)
-    },
-
-    updateComment() {
-      this.isUpd = !this.isUpd
-      if (!this.isUpd && this.comment.notes !== this.newCom)
-        this.$emit("update-comment", {"content": this.newCom, "id": this.comment.id})
-    },
-
-    download() {
-      this.$emit("download", {
-      	id: this.comment.id,
-				name: this.comment.filename,
-				storage:this.comment.storage})
     }
+
+   const deleteComment = ()=> {
+      ctx.emit(
+        "delete-comment", this.comment.id
+      )
+    }
+
+  const updateContent = ()=>{
+          console.log(refName.value.modelValue)
+       ctx.emit('update:content',refName.value.modelValue) //关键点
+    }
+
+    const updateComment = ()=> {
+      isUpd.value = !isUpd.value
+      console.log(props.comment.notes,newCom.value,isUpd.value)
+      if (!isUpd.value && props.comment.notes !== newCom.value) {
+          console.log("dddddddddd")
+          ctx.emit(
+             "update-comment", {"content": newCom.value, "id": props.comment.id})
+      }
+    }
+
+    const download =() => {
+
+      ctx.emit(
+        "download",  {
+      	id: props.comment.id,
+				name: props.comment.filename,
+				storage:props.comment.storage}
+      )
+    }
+  
+
+    onMounted(() => {
+       window.intel_configs.get("user_info").then(defaultConfig=>{
+        if (defaultConfig!=null) {
+              const existedUserInfoConfig = JSON.parse(defaultConfig)
+              isShow.value = existedUserInfoConfig.userName === props.comment.checkinor
+            }
+        })
+    })
+
+
+    return reactive({
+      refName,
+      isShow,
+      newCom,
+      isUpd,
+      commentDate,
+      fullDate,
+     deleteComment,
+     renderComment,
+     download,
+     updateComment,
+     deleteComment,
+     formatDate,
+     updateContent
+
+    })
   }
-}
+})
+
+
 </script>
 
 <style lang="scss" scoped>
