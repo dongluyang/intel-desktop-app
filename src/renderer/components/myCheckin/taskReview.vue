@@ -356,12 +356,13 @@ export default {
     async pass() {
       // if (!this.$refs["preview-player"].isMovie)
       //   this.$refs["preview-player"].captureImage()
+      const userInfo = await getUserInfo()
       let formdata = new FormData();
       formdata.append("isReturn", false)
       formdata.append("isPass",true)
       formdata.append("taskId",this.taskId)
       formdata.append("submitId", this.submitId)
-      formdata.append("user",getUserInfo().userName)
+      formdata.append("user",userInfo.userName)
 
       let result = await postReview(formdata);
       if (result.status === 0) {
