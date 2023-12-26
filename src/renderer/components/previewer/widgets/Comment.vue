@@ -153,12 +153,11 @@ export default defineComponent({
 
    const deleteComment = ()=> {
       ctx.emit(
-        "delete-comment", this.comment.id
+        "delete-comment", props.comment.id
       )
     }
 
   const updateContent = ()=>{
-          console.log(refName.value.modelValue)
        ctx.emit('update:content',refName.value.modelValue) //关键点
     }
 
